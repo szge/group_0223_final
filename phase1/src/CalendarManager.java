@@ -59,9 +59,11 @@ public class CalendarManager {
         return code;
     }
 
-
     /**
-     * Sends an event from this user to another user
+     * Sends an event from this user to another user.
+     *
+     * Creates another calendarManager for the other user, then
+     * "logs in" that one, and creates the new event in that calendarManager
      *
      * @param eventID
      * @param username
@@ -69,7 +71,34 @@ public class CalendarManager {
     public void sendEventToOtherUser(int eventID, String username, int uCalendarNum) {
         Event e = overMg.getEvent(eventID);
         CalendarManager cmg = new CalendarManager(uCalendarNum);
+        cmg.login_send_event(username, uCalendarNum);
         cmg.createEvent(e.getName(), e.getStartDateTime(), e.getEndDateTime());
+        cmg.logout();
+    }
+
+    /** A private version of login used only for sending the event to another user
+     * "Logs in" the user the event is sent to so that their data is loaded, and can be manipulated.
+     *
+     * USED ONLY FOR sendEventToOtherUser
+     *
+     * @param username
+     * @param uCalendarNum
+     * @return
+     */
+    private int login_send_event(String username, int uCalendarNum) {
+        try {
+            dataMg.login(username + Integer.toString(userCalendarNum));
+            ArrayList<ArrayList> overallData = new ArrayList<ArrayList>();
+            overallData.add(dataMg.getEvents());
+            overallData.add(dataMg.getMemos());
+            overallData.add(dataMg.getAlerts());
+            overallData.add(dataMg.getSeries());
+            overallData.add(dataMg.getAlertSeries());
+            overMg = new OverallManager(overallData);
+        } catch (FileNotFoundException e) {
+            return -1;
+        }
+        return 0;
     }
 
     /**
@@ -91,8 +120,11 @@ public class CalendarManager {
      */
     public boolean createNewUser(String user, String pass) {
         /* TODO: create a method createNewUser() in DataManager to correctly set up a new user for access */
-        // DataManager.createNewUser(user)
-        return userMg.createNewUser(user, pass);
+        Boolean success = userMg.createNewUser(user, pass);
+        if(success) {
+            dataMg.addNewUser(user);
+        }
+        return success;
     }
 
     /**
