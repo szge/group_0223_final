@@ -182,4 +182,31 @@ public class OverallManager{
         }
     }
 
-}
+    //search methods
+    public ArrayList<Event> getEventsByTag(String tag){
+         return this.eventManager.getEventsByTag(tag);
+    }
+
+    public ArrayList<Event> getEventsByMemo(Memo memo){
+        return this.eventManager.getEventsByMemo(memo);
+    }
+    public ArrayList<Event> getCurrentEvents(){
+        return this.eventManager.getCurrentEvents();
+    }
+    public ArrayList<Event> getFutureEvents(){
+        return this.eventManager.getFutureEvents();
+    }
+    public ArrayList<Event> getPastEvents(){
+        return this.eventManager.getPastEvents();
+    }
+    public ArrayList<Event> getEventsByDate(LocalDate date){
+        return this.eventManager.getEventsByDate(date);
+    }
+
+
+
+
+
+
+
+    }
