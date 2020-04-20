@@ -3,7 +3,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import com.sun.xml.internal.fastinfoset.util.PrefixArray;
+//import com.sun.xml.internal.fastinfoset.util.PrefixArray;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
@@ -20,7 +20,7 @@ public class CalendarDataFacade {
     public String usern;
 
     public CalendarDataFacade() {
-        String filename = "src/ProgramData.json";
+        String filename = "phase1/src/ProgramData.json";
         File file = new File(filename);
         JSONParser parser = new JSONParser();
 
@@ -106,19 +106,24 @@ public class CalendarDataFacade {
     public void login(String username) throws FileNotFoundException {
 
         ArrayList<JSONArray> toBeLoaded = new ArrayList<JSONArray>();
-        JSONObject user = (JSONObject) jfile.get(username);
-        toBeLoaded.add((JSONArray) user.get("Memos"));
-        toBeLoaded.add((JSONArray) user.get("Alerts"));
-        toBeLoaded.add((JSONArray) user.get("Events"));
-        toBeLoaded.add((JSONArray) user.get("Series"));
-        toBeLoaded.add((JSONArray) user.get("Alert Series"));
-        usern = username;
-        ArrayList<ArrayList> attributes = new ArrayList<ArrayList>();
-        attributes.add(memos);
-        attributes.add(alerts);
-        attributes.add(events);
-        attributes.add(series);
-        loader.loadData(toBeLoaded, attributes);
+        try {
+            JSONObject user = (JSONObject) jfile.get(username);
+            toBeLoaded.add((JSONArray) user.get("Memos"));
+            toBeLoaded.add((JSONArray) user.get("Alerts"));
+            toBeLoaded.add((JSONArray) user.get("Events"));
+            toBeLoaded.add((JSONArray) user.get("Series"));
+            toBeLoaded.add((JSONArray) user.get("Alert Series"));
+            usern = username;
+            ArrayList<ArrayList> attributes = new ArrayList<ArrayList>();
+            attributes.add(memos);
+            attributes.add(alerts);
+            attributes.add(events);
+            attributes.add(series);
+            loader.loadData(toBeLoaded, attributes);
+        } catch (NullPointerException e) {
+            System.out.println("Login attempt user not found in database. Creating new user profile in database.");
+            addNewUser(username);
+        }
     }
     /**
      * @author Danial
@@ -181,7 +186,7 @@ public class CalendarDataFacade {
             }
         }
         return eventsToReturn;
-}
+    }
     /**
      * @author Danial
      *
@@ -258,7 +263,7 @@ public class CalendarDataFacade {
             if(eventids.contains((Integer) event.getId())) {
                 eventsToReturn.add(event);
             }
-            }
+        }
         return eventsToReturn;
     }
     /**
