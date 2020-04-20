@@ -1,0 +1,5 @@
+Notes (by Alex) - 20 April 2020
+
+We didn't migrate from phase 1 folder to phase 2 folder until near submision.
+The commit in which I copied our phase 1 content to phase 2 is 62a9bb75.
+Hope that clears up any confusion; thanks!

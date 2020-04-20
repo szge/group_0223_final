@@ -116,7 +116,6 @@ public class CalendarManager {
             overallData.add(dataMg.getMemos());
             overallData.add(dataMg.getAlerts());
             overallData.add(dataMg.getSeries());
-            overallData.add(dataMg.getAlertSeries());
             overMg = new OverallManager(overallData);
         } catch (FileNotFoundException e) {
             return -1;

@@ -1,0 +1,81 @@
+Meeting 10 - Wed, 25 March @ Facebook Call
+- Discussed timeline until project submission
+- Need to finish, debug and get UML doc together
+
+Meeting 9 - Thursday, 12 March @ Bahen
+- Arsham: we don't want to store ID of events inside a series; we'll store a reference to the event itself
+- Also, we'll have have an FrequentAlert class that Emily will implement
+- Passing an event to another user: Alex, Jonathan, Danial
+- Motivational Quotes: Jonathan will implement in interface
+- Alex will add new functionality for Phase 2 to calendarManager
+- Alex will implement multiple calendars per user
+- Jonathan will look into GUI
+- Multiple users will have same events in the caendar: Alex
+- Ability for user to delete an event: Arsham
+- Jonathan and Danial will look into GUI/Android
+- Postpone/reschedule events: Arsham
+
+
+Meeting 8 - Tuesday, 10 March @ Lab
+- Met and discussed phase 2 components to implement
+- Phase 1: needs to be more polished, Alex Danial Arsham will meet up Thursday to clean up code
+
+Meeting 7 - Sunday, 08 March @ Bahen
+- Alex, Arsham, Emily met at bahen to fix bugs
+- Arsham had some parts left to complete
+- Emily's components were done
+- Alex's components were done (barring parts that relied on Arsham/Danial's work)
+- Jonathan's UI was functional but not fully working with all parts of program
+- Got UI to work with logging in a user, could not add events yet in UI
+
+Meeting 6 - Wednesday, 04 March @ Sid Smith (after class)
+- Went over new parts of design needed to implement before phase 1 due date
+- Agreed to move our extension deadline to Sunday night
+
+Meeting 5 - Tuesday, 03 March @ Lab
+- Talked with Brenna TA, she gave us advice on how to simplify design
+- Some overhauls needed:
+- Will add a user class
+- Will remove all creator classes (this can be done by Calendar)
+- Added managers for alerts, events, memos, series
+
+- New assignments:
+- Alex: Calendar, user manager, user
+- Danial: Data manager
+- Jonathan: Interface, Main
+- Emily: Event, Memo, Alert, Series
+
+Changelog Monday 02 March 10:20pm
+- Danial suggested that events should have a static variable to keep track of the number of existing events
+- And that way they can assign their own ID when they are created
+- instead of EventCreator keeping track and assigning them an ID
+
+- Danial also suggested having Series/Memos/Alerts etc track the ID of the event they are associated with
+- As opposed to keeping a reference to the event they are associated with
+
+- Changes discussed over facebook chat
+
+Meeting 4 - Monday, 02 March @ Bahen
+- Jonathan was unable to attend
+- Went over Alex's more developed design
+- Allocated parts to work on this week before Friday
+- Alex: CalendarManager, CreatorManager classes
+- Danial: DatabaseManager, Event/Series/Memo/Alert Database Classes
+- Emily: Event/Series/Memo/Alert base classes
+- Arsham: Event/Series/Memo/Alert Creator Classes
+- Jonathan's allocation TBD
+
+- Todo: User interface @ saving/storing method not decided yet
+
+
+Meeting 3 - Friday, 27 Feb (Call on Discord)
+- Discussed how consolidating a design was taking too long
+- Alex volunteered to put together a design based on everyone's input on Saturday
+- That way the design could be complete faster and we can get to work sooner
+
+Meeting 2 - Thursday, 26 Feb @ Bahen
+- Went over everyone's A2 designs and tried to put them together
+
+Meeting 1 - Tuesday, 24 Feb @ Lab
+- Alex was unable to attend (sick)
+- Group discussed their designs from Assignment 2
