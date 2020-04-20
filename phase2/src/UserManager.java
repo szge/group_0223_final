@@ -9,7 +9,6 @@
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -19,7 +18,7 @@ import java.io.IOException;
 public class UserManager {
 
     private JSONArray userJsonArray;
-    private static String FILE_PATH = "phase1/src/users.json";
+    private static final String FILE_PATH = "phase2/src/users.json";
 
     /**
      * @author Alex
@@ -42,9 +41,7 @@ public class UserManager {
         } catch(FileNotFoundException e) {
             System.out.println("Users.txt not found!");
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -96,13 +93,16 @@ public class UserManager {
                 return Boolean.FALSE;
             }
         }
+
+        System.out.println("Create new user" + username + password);
+
         // if we've reached this point, then the username does not previously exists
         // so we create a new user
         JSONObject newUser = new JSONObject();
         newUser.put("username", username);
         newUser.put("password", password);
         newUser.put("id", getNextAvailableID());
-        newUser.put("Num calendars", 1);
+        newUser.put("Num calendars", 0);
         userJsonArray.add(newUser);
 
         writeUserJsonFile();
@@ -172,10 +172,9 @@ public class UserManager {
         {
             JSONObject uo = (JSONObject) u;
             if (uo.get("username").equals(user)) {
-                int numCalenders = (Integer)uo.get("Num calendars");
-                uo.put("Num calendars", numCalenders+1);
+                uo.put("Num calendars", (Long) uo.get("Num calendars") + 1);
             }
-            }
+        }
         writeUserJsonFile();
     }
 
@@ -183,10 +182,25 @@ public class UserManager {
         for(Object u: userJsonArray) {
             JSONObject uo = (JSONObject) u;
             if (uo.get("username").equals(user)) {
-                return (Integer) uo.get("Num calendars");
+                try {
+                    return ((Long) uo.get("Num calendars")).intValue();
+                } catch (ClassCastException e) {
+                    // uo.get("Num calendars") is an integer already
+                    return (int) uo.get("Num calendars");
+                }
             }
         }
         return 0;
     }
 
+    public void deleteCalendar(String user) {
+        for(Object u: userJsonArray)
+        {
+            JSONObject uo = (JSONObject) u;
+            if (uo.get("username").equals(user) && getNumCalendars(user) > 0) {
+                uo.put("Num calendars", (Long) uo.get("Num calendars") - 1);
+            }
+        }
+        writeUserJsonFile();
+    }
 }

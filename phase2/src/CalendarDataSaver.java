@@ -29,7 +29,7 @@ public class CalendarDataSaver {
         user.put("Alerts", saveAlerts(alerts));
         user.put("Series", saveSeries(series));
         obj.put(username, user);
-        try(FileWriter file = new FileWriter("phase1/src/ProgramData.json")) {
+        try(FileWriter file = new FileWriter("phase2/src/ProgramData.json")) {
             file.write(obj.toJSONString());
         } catch (IOException e) {
             e.printStackTrace();

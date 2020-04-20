@@ -68,7 +68,7 @@ public class CalendarManager {
             try {
                 username = user;
                 password = pass;
-                dataMg.login(user + Integer.toString(userCalendarNum));
+                dataMg.login(user + userCalendarNum);
                 ArrayList<ArrayList> overallData = new ArrayList<ArrayList>();
                 overallData.add(dataMg.getEvents());
                 overallData.add(dataMg.getMemos());
@@ -328,6 +328,10 @@ public class CalendarManager {
 
     public ArrayList<Memo> getMemos() {
         return dataMg.getMemos();
+    }
+
+    public void deleteCalendar() {
+        userMg.deleteCalendar(username);
     }
 }
 
