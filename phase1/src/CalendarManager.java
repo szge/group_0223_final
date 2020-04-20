@@ -13,7 +13,8 @@ public class CalendarManager {
     private UserManager userMg;
     private OverallManager overMg;
     private CalendarDataFacade dataMg;
-
+    private String username;
+    private String password;
     //Each CalendarManager has a calendarNum to identify which of the user's calendars this is
     private int userCalendarNum;
 
@@ -28,6 +29,27 @@ public class CalendarManager {
         dataMg = new CalendarDataFacade();
         userCalendarNum = uCalendarNum;
     }
+
+    public void addCalendar(){
+        userMg.addCalendar(username);
+
+    }
+    public int getNumCalendars(){
+        return userMg.getNumCalendars(username);
+
+    }
+    public void SwitchCalendars(int calendar){
+        if((getNumCalendars() >= calendar)&&(calendar>0)) {
+            String user = username;
+            String pass = password;
+            logout();
+            userCalendarNum = calendar;
+            login(user, pass);
+        }else {
+            System.out.println("Invalid input");
+        }
+    }
+
 
     /**
      * Logs in this user.
@@ -44,6 +66,8 @@ public class CalendarManager {
         int code = userMg.login(user, pass);
         if (code > 0) {
             try {
+                username = user;
+                password = pass;
                 dataMg.login(user + Integer.toString(userCalendarNum));
                 ArrayList<ArrayList> overallData = new ArrayList<ArrayList>();
                 overallData.add(dataMg.getEvents());
@@ -122,7 +146,7 @@ public class CalendarManager {
     }
 
     public Event getEventByID(int id) {
-        return overMg.getEvent(Integer.parseInt(Integer.toString(id)));
+        return overMg.getEvent(id);
     }
 
     /**
@@ -170,6 +194,8 @@ public class CalendarManager {
 
     public void logout() {
         dataMg.logout();
+        username = null;
+        password = null;
     }
 
 
@@ -255,6 +281,22 @@ public class CalendarManager {
     public void addSerialAlerts(Event event, String name, LocalDateTime start,
                                 LocalDateTime finish, Duration repetition) {
         overMg.addSerialAlerts(event, name, start, finish, repetition);
+    }
+
+    public ArrayList<Event> getPastEvents() {
+        return overMg.getPastEvents();
+    }
+
+    public ArrayList<Event> getCurrentEvents() {
+        return overMg.getCurrentEvents();
+    }
+
+    public ArrayList<Event> getFutureEvents() {
+        return overMg.getFutureEvents();
+    }
+
+    public ArrayList<Memo> getMemos() {
+        return dataMg.getMemos();
     }
 }
 
