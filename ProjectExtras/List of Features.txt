@@ -1,0 +1,13 @@
+List of Features:
+
+All Mandatory Features Implemented:
+- All functionality from phase 1
+- Multiple calendars per user
+- Multiple users can have the same event in their calendar (can "send" events to other users & calendars)
+- Ability to delete/edit events
+
+Team-specific feature: Daily motivational message
+
+Optional Features:
+- GUI
+- Ability to postpone/reschedule an event
