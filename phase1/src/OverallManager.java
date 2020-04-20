@@ -223,7 +223,7 @@ public class OverallManager{
     public void dayWeekMothHoliday(int month, int week, DayOfWeek day, int year, String name){
         LocalDateTime start = LocalDateTime.now().withMonth(month).withDayOfMonth(1);
         for (int i = 0; i < year; i++) {
-            for (int i = 0; i < week - 1; i++) {
+            for (int j = 0; j < week - 1; j++) {
                 start = start.plusWeeks(1);
             }
             while (!start.getDayOfWeek().equals(DayOfWeek.MONDAY)){
