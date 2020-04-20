@@ -20,7 +20,7 @@ public class CalendarDataFacade {
     public String usern;
 
     public CalendarDataFacade() {
-        String filename = "phase2/src/ProgramData.json";
+        String filename = "src/ProgramData.json";
         File file = new File(filename);
         JSONParser parser = new JSONParser();
 

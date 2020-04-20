@@ -18,7 +18,7 @@ import java.io.IOException;
 public class UserManager {
 
     private JSONArray userJsonArray;
-    private static final String FILE_PATH = "phase2/src/users.json";
+    private static final String FILE_PATH = "src/users.json";
 
     /**
      * @author Alex
