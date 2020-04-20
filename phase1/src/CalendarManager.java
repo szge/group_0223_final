@@ -13,7 +13,8 @@ public class CalendarManager {
     private UserManager userMg;
     private OverallManager overMg;
     private CalendarDataFacade dataMg;
-
+    private String username;
+    private String password;
     //Each CalendarManager has a calendarNum to identify which of the user's calendars this is
     private int userCalendarNum;
 
@@ -28,6 +29,27 @@ public class CalendarManager {
         dataMg = new CalendarDataFacade();
         userCalendarNum = uCalendarNum;
     }
+
+    public void addCalendar(){
+        userMg.addCalendar(username);
+
+    }
+    public int getNumCalendars(){
+        return userMg.getNumCalendars(username);
+
+    }
+    public void SwitchCalendars(int calendar){
+        if((getNumCalendars() >= calendar)&&(calendar>0)) {
+            String user = username;
+            String pass = password;
+            logout();
+            userCalendarNum = calendar;
+            login(user, pass);
+        }else {
+            System.out.println("Invalid input");
+        }
+    }
+
 
     /**
      * Logs in this user.
@@ -44,13 +66,14 @@ public class CalendarManager {
         int code = userMg.login(user, pass);
         if (code > 0) {
             try {
+                username = user;
+                password = pass;
                 dataMg.login(user + Integer.toString(userCalendarNum));
                 ArrayList<ArrayList> overallData = new ArrayList<ArrayList>();
                 overallData.add(dataMg.getEvents());
                 overallData.add(dataMg.getMemos());
                 overallData.add(dataMg.getAlerts());
                 overallData.add(dataMg.getSeries());
-                overallData.add(dataMg.getAlertSeries());
                 overMg = new OverallManager(overallData);
             } catch (FileNotFoundException e) {
                 return -1;
@@ -119,12 +142,8 @@ public class CalendarManager {
      * FALSE if a user with that username exists already
      */
     public boolean createNewUser(String user, String pass) {
-        /* TODO: create a method createNewUser() in DataManager to correctly set up a new user for access */
-        Boolean success = userMg.createNewUser(user, pass);
-        if(success) {
-            dataMg.addNewUser(user);
-        }
-        return success;
+        dataMg.addNewUser(user + 1);
+        return userMg.createNewUser(user, pass);
     }
 
     /**
@@ -156,7 +175,7 @@ public class CalendarManager {
     }
 
     public Event getEventByID(int id) {
-        return overMg.getEvent(Integer.parseInt(Integer.toString(id)));
+        return overMg.getEvent(id);
     }
 
     /**
@@ -204,20 +223,10 @@ public class CalendarManager {
 
     public void logout() {
         dataMg.logout();
+        username = null;
+        password = null;
     }
 
-
-    /**
-     * @return void
-     * @author Alex
-     */
-    public void postponeIndef(int id) {
-        overMg.postponeIndef(id);
-    }
-
-    public Event duplicateEvent(int id) {
-        return overMg.duplicateEvent(id);
-    }
 
     public void editEventName(Event event, String content) {
         overMg.editEventName(event, content);
@@ -259,9 +268,9 @@ public class CalendarManager {
         overMg.editAlertTime(alert, when);
     }
 
-    public ArrayList<Alert> getRemainingAlerts(int id) {
-        return overMg.getRemainingAlerts(id);
-    }
+//    public ArrayList<Alert> getRemainingAlerts(int id) {
+//        return overMg.getRemainingAlerts(id);
+//    }
 
     public void addMemo(Event event, String content) {
         overMg.addMemo(event, content);
@@ -283,31 +292,40 @@ public class CalendarManager {
         overMg.editMemo(memo, content);
     }
 
-    public void addSerialEvent(LocalDateTime startStart, LocalDateTime startEnd,
-                               Duration repetition, LocalDateTime absoluteEnd, String name) {
-        overMg.addSerialEvent(startStart, startEnd, repetition, absoluteEnd, name);
-    }
+//    public void addSerialEvent(LocalDateTime startStart, LocalDateTime startEnd,
+//                               Duration repetition, LocalDateTime absoluteEnd, String name) {
+//        overMg.addSerialEvent(startStart, startEnd, repetition, absoluteEnd, name);
+//    }
+//
+//    public void addSerialEvent(LocalDateTime startStart, LocalDateTime startEnd,
+//                               Duration repetition, LocalDateTime absoluteEnd, String name, String content) {
+//        overMg.addSerialEvent(startStart, startEnd, repetition, absoluteEnd, name, content);
+//    }
+//
+//    public void deleteSerialEvent(Event event) {
+//        overMg.deleteSerialEvent(event);
+//    }
 
-    public void addSerialEvent(LocalDateTime startStart, LocalDateTime startEnd,
-                               Duration repetition, LocalDateTime absoluteEnd, String name, String content) {
-        overMg.addSerialEvent(startStart, startEnd, repetition, absoluteEnd, name, content);
-    }
-
-    public void deleteSerialEvent(Event event) {
-        overMg.deleteSerialEvent(event);
-    }
-
-    public void editNameSerialEvent(Event event, String name) {
-        overMg.editNameSerialEvent(event, name);
-    }
 
     public void addSerialAlerts(Event event, String name, LocalDateTime start,
                                 LocalDateTime finish, Duration repetition) {
         overMg.addSerialAlerts(event, name, start, finish, repetition);
     }
 
-    public void deleteSerialAlerts(Event event, Alert alert) {
-        overMg.deleteSerialAlerts(event, alert);
+    public ArrayList<Event> getPastEvents() {
+        return overMg.getPastEvents();
+    }
+
+    public ArrayList<Event> getCurrentEvents() {
+        return overMg.getCurrentEvents();
+    }
+
+    public ArrayList<Event> getFutureEvents() {
+        return overMg.getFutureEvents();
+    }
+
+    public ArrayList<Memo> getMemos() {
+        return dataMg.getMemos();
     }
 }
 

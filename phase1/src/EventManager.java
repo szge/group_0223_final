@@ -1,32 +1,48 @@
-//author: Arsham
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.time.*;
 
 public class EventManager {
 
     private ArrayList<Event> store;
 
-    public EventManager(ArrayList<Event> store) { this.store = store; }
+    public EventManager(ArrayList<Event> store) {
+        this.store = store;
+    }
 
 
     //Phase 2 methods
     /**
      * postpone the event by setting it's start and end as null, while maintaining its duration
-     * @param id
+     * @param event
      */
-    public void postponeIndef(int id){
-        this.getEvent(id).postpone();
+    public void postpone(Event event){
+        event.postpone();
     }
 
-    /**
-     * Creates another event with the same name, start and ending as the event of the given id
-     * @param id
-     * @return the event created
-     */
-    public Event duplicateEvent(int id){
-        Event event = this.getEvent(id);
-        return this.createEvent(event.getName(), event.getStartDateTime(), event.getEndDateTime());
+    public ArrayList<Event> getPostponed(){
+        ArrayList<Event> events = new ArrayList<>();
+        for (int i = 0; i < this.store.size(); i++) {
+            if (this.store.get(i).getStartDateTime() == null){
+                events.add(this.store.get(i));
+            }
+        }
+        return events;
     }
+
+    public int getId(Event event){
+        return event.getId();
+    }
+
+    public Event getEvent(int id){
+        for (Event event : this.store) {
+            if (event.getId() == id) {
+                return event;
+            }
+        }
+        return null;
+    }
+
 
 
     //1)Basics for events
@@ -112,6 +128,10 @@ public class EventManager {
         event.addTag(newTag);
     }
 
+    public ArrayList<String> getTag(Event event){
+        return event.getTags();
+    }
+
     //3)Alert methods
     public void deleteAlert(Event event, Alert alert) {
         event.removeAlert(alert);
@@ -131,21 +151,6 @@ public class EventManager {
     public void addMemo(Event event, Memo memo) {
         event.addMemo(memo);
     } //add/replace a memo
-
-    //5)Getter methods
-    public Event getEvent(int id){
-        //get an event with id
-        for (int i = 0; i < this.store.size(); i++) {
-            if (this.store.get(i).getId() == id){
-                return this.store.get(i);
-            }
-        }
-        return null;
-    }
-
-    public int getEvent(Event event){
-        return event.getId();
-    } //get the id of an event
 
     public Memo getMemo(Event event){
         return event.getMemo();

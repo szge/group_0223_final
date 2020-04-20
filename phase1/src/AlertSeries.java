@@ -1,9 +1,18 @@
+/**
+
+
+
 import java.time.*;
+import java.util.ArrayList;
+
+package sample;
+
+import java.time.Duration;
 import java.util.ArrayList;
 
 public class AlertSeries {
     private String name;
-    private ArrayList<Integer> alerts;
+    private ArrayList<Alert> alerts;
 
     private int id;
     private static int numAlertSeries = 0;
@@ -17,6 +26,10 @@ public class AlertSeries {
         this.duration = duration;
     }
 
+    public void addAlert(Alert alert){
+        this.alerts.add(alert);
+    }
+
     public int getId() {
         return id;
     }
@@ -25,14 +38,14 @@ public class AlertSeries {
         return this.name;
     }
 
-    public ArrayList<Integer> getAlerts() {
+    public ArrayList<Alert> getAlerts() {
         return alerts;
     }
 
     public static void bringDownNum() {
         numAlertSeries --;
     }
-    
+
     // remove an alert
     public void removeAlert(int id){
         alerts.remove(id);
@@ -46,3 +59,4 @@ public class AlertSeries {
         this.name = name;
     }
 }
+ */

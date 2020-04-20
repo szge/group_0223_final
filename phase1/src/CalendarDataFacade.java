@@ -14,7 +14,6 @@ public class CalendarDataFacade {
     private ArrayList<Memo> memos = new ArrayList<Memo>();
     private ArrayList<Alert> alerts = new ArrayList<Alert>();
     private ArrayList<Series> series = new ArrayList<Series>();
-    private ArrayList<AlertSeries> alertSeries = new ArrayList<AlertSeries>();
     private CalendarDataLoader loader = new CalendarDataLoader();
     private CalendarDataSaver saver = new CalendarDataSaver();
     private JSONObject jfile;
@@ -80,16 +79,6 @@ public class CalendarDataFacade {
     public ArrayList<Series> getSeries() {
         return series;
     }
-    /**
-     * @author Danial
-     *
-     * Returns all alertseries
-     * @return
-     * ArrayList<AlertSeries>
-     */
-    public ArrayList<AlertSeries> getAlertSeries() {
-        return alertSeries;
-    }
 
     /**
      * @author Danial
@@ -129,7 +118,6 @@ public class CalendarDataFacade {
         attributes.add(alerts);
         attributes.add(events);
         attributes.add(series);
-        attributes.add(alertSeries);
         loader.loadData(toBeLoaded, attributes);
     }
     /**
@@ -141,7 +129,7 @@ public class CalendarDataFacade {
      */
     public void addNewUser(String username){
         saver.saveData(new ArrayList<Event>(), new ArrayList<Memo>(), new ArrayList<Alert>(), new ArrayList<Series>(),
-                new ArrayList<AlertSeries>(), jfile, username);
+                jfile, username);
     }
     /**
      * @author Danial
@@ -149,12 +137,11 @@ public class CalendarDataFacade {
      * Saves everything to the JSON file and resets everything
      */
     public void logout(){
-        saver.saveData(events, memos, alerts, series, alertSeries, jfile, usern);
+        saver.saveData(events, memos, alerts, series, jfile, usern);
         events = new ArrayList<Event>();
         memos = new ArrayList<Memo>();
         alerts = new ArrayList<Alert>();
         series = new ArrayList<Series>();
-        alertSeries = new ArrayList<AlertSeries>();
         jfile = null;
         usern = null;
 

@@ -21,14 +21,13 @@ public class CalendarDataSaver {
      * ArrayList<Event>
      */
     public void saveData (ArrayList<Event> events, ArrayList<Memo> memos, ArrayList<Alert> alerts,
-                             ArrayList<Series> series, ArrayList<AlertSeries> alertSeries, JSONObject obj,
+                             ArrayList<Series> series, JSONObject obj,
                           String username){
         JSONObject user = new JSONObject();
         user.put("Events", saveEvents(events));
         user.put("Memos", saveMemos(memos));
         user.put("Alerts", saveAlerts(alerts));
         user.put("Series", saveSeries(series));
-        user.put("Alert Series", saveAlertSeries(alertSeries));
         obj.put(username, user);
         try(FileWriter file = new FileWriter("src/ProgramData.json")) {
             file.write(obj.toJSONString());
@@ -107,24 +106,24 @@ public class CalendarDataSaver {
         return array;
     }
 
-    /**
-     *
-     * Convert an ArrayList of AlertSeries into a JSONArray
-     * @param AlertSe
-     * @return corresponding JSONArray
-     */
-    private JSONArray saveAlertSeries(ArrayList<AlertSeries> AlertSe){
-        JSONArray array = new JSONArray();
-        for(AlertSeries alerts: AlertSe){
-            JSONObject obj = new JSONObject();
-            JSONArray alertids = new JSONArray();
-            alertids.addAll(alerts.getAlerts());
-            obj.put("name", alerts.getName());
-            obj.put("Alert ids", alertids);
-            array.add(obj);
-        }
-        return array;
-    }
+//    /**
+//     *
+//     * Convert an ArrayList of AlertSeries into a JSONArray
+//     * @param AlertSe
+//     * @return corresponding JSONArray
+//     */
+//    private JSONArray saveAlertSeries(ArrayList<AlertSeries> AlertSe){
+//        JSONArray array = new JSONArray();
+//        for(AlertSeries alerts: AlertSe){
+//            JSONObject obj = new JSONObject();
+//            JSONArray alertids = new JSONArray();
+//            alertids.addAll(alerts.getAlerts());
+//            obj.put("name", alerts.getName());
+//            obj.put("Alert ids", alertids);
+//            array.add(obj);
+//        }
+//        return array;
+//    }
 
     /**
      *

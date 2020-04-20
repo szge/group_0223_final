@@ -102,6 +102,7 @@ public class UserManager {
         newUser.put("username", username);
         newUser.put("password", password);
         newUser.put("id", getNextAvailableID());
+        newUser.put("Num calendars", 1);
         userJsonArray.add(newUser);
 
         writeUserJsonFile();
@@ -165,4 +166,27 @@ public class UserManager {
             e.printStackTrace();
         }
     }
+
+    public void addCalendar(String user) {
+        for(Object u: userJsonArray)
+        {
+            JSONObject uo = (JSONObject) u;
+            if (uo.get("username").equals(user)) {
+                int numCalenders = (Integer)uo.get("Num calendars");
+                uo.put("Num calendars", numCalenders+1);
+            }
+            }
+        writeUserJsonFile();
+    }
+
+    public int getNumCalendars(String user) {
+        for(Object u: userJsonArray) {
+            JSONObject uo = (JSONObject) u;
+            if (uo.get("username").equals(user)) {
+                return (Integer) uo.get("Num calendars");
+            }
+        }
+        return 0;
+    }
+
 }

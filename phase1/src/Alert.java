@@ -41,17 +41,29 @@ public class Alert {
         return dateTime;
     }
 
-    // changeName changes the name/message of the alert
+    /**
+     * Author : Arsham Moradi
+     * @param content New name of the Alert
+     * Changes the time for the Alert
+     */
     public void changeName(String content){
         this.name  = content;
     }
 
-    // changeTime changes the time of the alert
+    /**
+     * Author : Arsham Moradi
+     * @param time New time for the alert
+     * Changes the time for the Alert
+     */
     public void changeTime(LocalDateTime time){
         this.dateTime = time;
     }
 
-    // getName returns the name/message of the alert
+    /**
+     * Author : Arsham Moradi
+     * @return  The name of this alert
+     * Returns the name of this alert
+     */
     public String getName(){
         return this.name;
     }

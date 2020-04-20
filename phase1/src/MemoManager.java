@@ -1,5 +1,4 @@
 //Author:Arsham
-import java.util.HashMap;
 import java.util.ArrayList;
 
 
@@ -29,6 +28,10 @@ public class MemoManager {
         if (this.getContent(content).getEvents().size() == 0){
             this.store.remove(this.getContent(content));
         }
+    }
+
+    public void deleteMemo(Memo memo){
+        this.store.remove(memo);
     }
 
     private boolean contains(String content){

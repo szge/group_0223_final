@@ -25,17 +25,6 @@ public class Event {
         this.duration = Duration.between(start, end);
     }
 
-    public Event(String name, LocalDateTime start, LocalDateTime end, Memo memo) {
-        numEvents++;
-        id = numEvents;
-        this.name = name;
-        this.startDateTime = start;
-        this.endDateTime = end;
-        this.duration = Duration.between(start, end);
-        addMemo(memo);
-    }
-
-
      // add tag to this Events ArrayList of tags
     public void addTag(String tag) {
         tags.add(tag);
@@ -107,45 +96,68 @@ public class Event {
         }
     }
 
-    // return the Memo associated with this Event
+    /**
+     *
+     * @return
+     */
     public Memo getMemo(){
         return this.memo;
     }
 
-    // change the name of this Event to newName
+    /**
+     *
+     * @param newName
+     */
     public void editName(String newName) {
         name = newName;
     }
 
-    // change the memo associated with this Event
+    /**
+     *
+     * @param memo
+     */
     public void editMemo(Memo memo) {
         this.memo = memo;
     }
 
-    // change the start time and date of this Event
+    /**
+     *
+     * @param start
+     */
     public void editStart(LocalDateTime start) {
         if (start.isBefore(endDateTime)){
             startDateTime = start;
         }
     }
 
-    // change the end time and date of this event
+    /**
+     *
+     * @param end
+     */
     public void editEnd(LocalDateTime end){
         if (end.isAfter(this.startDateTime)){
             this.endDateTime = end;
         }
     }
 
-    //remove the memo associated with this Event
+    /**
+     *
+     */
     public void removeMemo(){
         this.memo = null;
     }
 
-    // remove alert from this Events ArrayList of Alerts
+    /**
+     *
+     * @param alert
+     */
     public void removeAlert(Alert alert){
         this.alerts.remove(alert);
     }
 
+    /**
+     *
+     */
     public void postpone(){
         this.startDateTime = null;
         this.endDateTime = null;

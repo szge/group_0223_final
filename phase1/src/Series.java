@@ -2,8 +2,7 @@ import java.util.ArrayList;
 
 public class Series {
     private String name;
-    private ArrayList<Integer> events = new ArrayList<>();
-
+    private ArrayList<Event> events = new ArrayList<>();
     private int id;
     private static int numSeries = 0;
 
@@ -21,22 +20,34 @@ public class Series {
         return this.name;
     }
 
-    public ArrayList<Integer> getEvents() {
+    public ArrayList<Event> getEvents() {
         return this.events;
     }
 
-    public static void bringDownNum() {
-        numSeries --;
-    }
 
     /**
-     * Add the id of an event to this memo's list of associated events
-     * @param newEvent the event whose id is being added
+     * Author: Arsham Moradi
+     * @param newEvent
      */
+
     public void addEvent(Event newEvent) {
-        if (!events.contains(newEvent.getId())) {
-            events.add(newEvent.getId());
+        if (!events.contains(newEvent)) {
+            events.add(newEvent);
         }
+    }
+
+    public void removeEvent(Event event){
+        if (events.contains(event)) {
+            events.remove(event);
+        }
+    }
+
+    public boolean contains(Event event){
+        return events.contains(event);
+    }
+
+    public void changeName(String name){
+        this.name = name;
     }
 
 }

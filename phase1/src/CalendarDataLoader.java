@@ -14,7 +14,7 @@ public class CalendarDataLoader {
      * @return
      * LocalDateTime object
      */
-    private static LocalDateTime makeLocalDateTime(JSONObject time){
+    private  LocalDateTime makeLocalDateTime(JSONObject time){
         int year = ((Long)time.get("year")).intValue();
         int month = ((Long)time.get("month")).intValue();
         int day = ((Long)time.get("day")).intValue();
@@ -33,12 +33,11 @@ public class CalendarDataLoader {
      * @param variables ArrayList of ArrayLists to be filled with Event, Memo,
      *      * Alert, and Series objects
      */
-    public static void loadData(ArrayList<JSONArray> toBeLoaded, ArrayList<ArrayList> variables) {
+    public void loadData(ArrayList<JSONArray> toBeLoaded, ArrayList<ArrayList> variables) {
         loadMemos(toBeLoaded.get(0), variables.get(0));
         loadAlerts(toBeLoaded.get(1), variables.get(1));
         loadEvents(toBeLoaded.get(2), variables.get(2), variables.get(0), variables.get(1));
         loadSeries(toBeLoaded.get(3), variables.get(3), variables.get(2));
-        loadAlertSeries(toBeLoaded.get(4), variables.get(4), variables.get(1));
     }
     /**
      * @author Danial
@@ -49,7 +48,7 @@ public class CalendarDataLoader {
      *                   to be converted
      * @param memos An Array to be filled with Memo objects
      */
-    private static void loadMemos(JSONArray jsonmemos, ArrayList<Memo> memos){
+    private void loadMemos(JSONArray jsonmemos, ArrayList<Memo> memos){
         for(Object jmemo: jsonmemos){
             JSONObject jsonmemo = (JSONObject) jmemo;
             String content = (String)jsonmemo.get("content");
@@ -65,7 +64,7 @@ public class CalendarDataLoader {
      *                   to be converted
      * @param events An Array to be filled with Event objects
      */
-    public static void loadEvents(JSONArray jsonevents, ArrayList<Event> events, ArrayList<Memo> memos,
+    public void loadEvents(JSONArray jsonevents, ArrayList<Event> events, ArrayList<Memo> memos,
                                   ArrayList<Alert> alerts){
         for(Object jevent: jsonevents){
             JSONObject jsonevent = (JSONObject) jevent;
@@ -106,7 +105,7 @@ public class CalendarDataLoader {
      *                   to be converted
      * @param series An Array to be filled with Series objects
      */
-    private static void loadSeries(JSONArray jsonseries, ArrayList<Series> series, ArrayList<Event> events){
+    private void loadSeries(JSONArray jsonseries, ArrayList<Series> series, ArrayList<Event> events){
         for(Object js: jsonseries){
             JSONObject jsonse = (JSONObject) js;
             String name = (String)jsonse.get("name");
@@ -130,7 +129,7 @@ public class CalendarDataLoader {
      *                   to be converted
      * @param alerts An Array to be filled with Alert objects
      */
-    private static void loadAlerts(JSONArray jsonalerts, ArrayList<Alert> alerts){
+    private void loadAlerts(JSONArray jsonalerts, ArrayList<Alert> alerts){
         for(Object jalert: jsonalerts){
             JSONObject jsonalert = (JSONObject) jalert;
             String name = (String)jsonalert.get("name");
@@ -139,29 +138,29 @@ public class CalendarDataLoader {
             alerts.add(new Alert(name, alertTime));
         }
     }
-    /**
-     * @author Danial
-     *
-     * Turns the JSONObjects from jsonalertSeries into AlertSeries
-     * objects, and adds them to alertSeries
-     * @param  jsonalertSeries JSONArray containing JSONObjects
-     *                   to be converted
-     * @param alertSeries An Array to be filled with AlertSeries objects
-     */
-    private static void loadAlertSeries(JSONArray jsonalertSeries, ArrayList<AlertSeries> alertSeries,
-                                        ArrayList<Alert> alerts) {
-        for (Object jsonAS: jsonalertSeries) {
-            JSONObject jsonAlertSeries = (JSONObject) jsonAS;
-            String name = (String) jsonAlertSeries.get("name");
-            AlertSeries createdAlertSeries = new AlertSeries(name);
-            for(Object id: (JSONArray)jsonAlertSeries.get("Alert ids")){
-                for(Alert alert: alerts){
-                    if(((Long)id).intValue() == alert.getId()){
-                        createdAlertSeries.addAlert(alert);
-                    }
-                }
-            }
-            alertSeries.add(createdAlertSeries);
-        }
-    }
+//    /**
+//     * @author Danial
+//     *
+//     * Turns the JSONObjects from jsonalertSeries into AlertSeries
+//     * objects, and adds them to alertSeries
+//     * @param  jsonalertSeries JSONArray containing JSONObjects
+//     *                   to be converted
+//     * @param alertSeries An Array to be filled with AlertSeries objects
+//     */
+//    private static void loadAlertSeries(JSONArray jsonalertSeries, ArrayList<AlertSeries> alertSeries,
+//                                        ArrayList<Alert> alerts) {
+//        for (Object jsonAS: jsonalertSeries) {
+//            JSONObject jsonAlertSeries = (JSONObject) jsonAS;
+//            String name = (String) jsonAlertSeries.get("name");
+//            AlertSeries createdAlertSeries = new AlertSeries(name);
+//            for(Object id: (JSONArray)jsonAlertSeries.get("Alert ids")){
+//                for(Alert alert: alerts){
+//                    if(((Long)id).intValue() == alert.getId()){
+//                        createdAlertSeries.addAlert(alert);
+//                    }
+//                }
+//            }
+//            alertSeries.add(createdAlertSeries);
+//        }
+//    }
 }
