@@ -142,8 +142,11 @@ public class CalendarManager {
      * FALSE if a user with that username exists already
      */
     public boolean createNewUser(String user, String pass) {
-        dataMg.addNewUser(user + 1);
-        return userMg.createNewUser(user, pass);
+        Boolean success = userMg.createNewUser(user, pass);
+        if(success) {
+            dataMg.addNewUser(user+"1");
+        }
+        return success;
     }
 
     /**
