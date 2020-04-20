@@ -3,11 +3,11 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GUI extends JFrame {
-    // TODO: Fix stupid bug, replication: Login Danial:abcd, Calendars -> 1, Search Events -> Tab, ghost buttons????
 
     static JFrame f;
 
@@ -198,6 +198,7 @@ public class GUI extends JFrame {
         for (Alert a : calendarManager.getAlerts()) {
             // TODO: this
         }
+        refreshPanelMain();
         panelMain.add(tab, BorderLayout.CENTER);
         panelMain.revalidate();
         f.revalidate();
@@ -248,7 +249,7 @@ public class GUI extends JFrame {
         // natural height, maximum width
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel eventDesc = new JLabel("Filler text \n HELLO \n Line 3");
+        JLabel eventDesc = new JLabel(ev.toString());
         c.weightx = 0.0;
         c.gridwidth = 3;
         c.ipady = 60;
@@ -280,9 +281,19 @@ public class GUI extends JFrame {
         c.gridx = 2;
         c.gridy = 1;
         c.ipady = 0;
+        button.addActionListener(e -> memosView(ev));
         pane.add(button, c);
 
+        button = new JButton("Create Alerts");
+
         return pane;
+    }
+
+    // Popup window where a user can view event memos, or add/subtract memos
+    private static void memosView(Event ev) {
+    }
+
+    private static void createAlertsAlerts(Event ev) {
     }
 
     private static void editEvent(Event ev) {
@@ -320,36 +331,21 @@ public class GUI extends JFrame {
             eventsList.add(panelEvent(e));
         }
 
-//        for (int i = 0; i < 10; i++){
-//            eventsList.add(panelEvent(null));
-//        }
-
         JScrollPane scrollTab = new JScrollPane(eventsList);
 
         tab.add(scrollTab, BorderLayout.CENTER);
 
+        refreshPanelMain();
         panelMain.add(tab, BorderLayout.CENTER);
         panelMain.revalidate();
         f.setTitle("Calendar " + s);
         f.revalidate();
     }
 
-//    private static void clearPanelContent() {
-//        Component[] componentList = panelContent.getComponents();
-//
-//        //Loop through the components
-//        for(Component c : componentList){
-//            panelContent.remove(c);
-//        }
-//
-//        panelMain.remove(panelContent);
-//
-//        panelContent = new JPanel();
-//
-//        panelMain.add(panelContent, BorderLayout.CENTER);
-//        panelMain.revalidate();
-//        f.revalidate();
-//    }
+    private static void refreshPanelMain() {
+        panelMain.removeAll();
+        panelMain.add(panelSidebar, BorderLayout.WEST);
+    }
 
     private static void addEvent() {
     }
@@ -378,11 +374,14 @@ public class GUI extends JFrame {
             JPanel eventsList = new JPanel(new GridLayout(0, 1));
 
             for (int i = 0; i < 10; i++) {
-                eventsList.add(panelEvent(null));
+                // Temporarily test events
+                Event e = new Event("Event " + i, LocalDateTime.now(), LocalDateTime.now().plusMinutes(1));
+                eventsList.add(panelEvent(e));
             }
 
             JScrollPane tab = new JScrollPane(eventsList);
 
+            refreshPanelMain();
             panelMain.add(tab, BorderLayout.CENTER);
             panelMain.revalidate();
             f.revalidate();

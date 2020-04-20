@@ -65,7 +65,7 @@ public class Event {
     }
 
     public String toString() {
-        return String.format("E# %d %s @ %s until %s", id, name, startDateTime.toString(), endDateTime.toString());
+        return String.format("Event #%d Name: %s Start time: %s End time: %s", id, name, startDateTime.toString(), endDateTime.toString());
     }
 
     public String getName() {
