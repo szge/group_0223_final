@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GUI extends JFrame {
+    // TODO: Fix stupid bug, replication: Login Danial:abcd, Calendars -> 1, Search Events -> Tab, ghost buttons????
+
     static JFrame f;
 
     static JPanel panelMain, panelSidebar, panelContent;
@@ -195,8 +198,8 @@ public class GUI extends JFrame {
         for (Alert a : calendarManager.getAlerts()) {
             // TODO: this
         }
-
         panelMain.add(tab, BorderLayout.CENTER);
+        panelMain.revalidate();
         f.revalidate();
     }
 
@@ -292,7 +295,6 @@ public class GUI extends JFrame {
     }
 
     public static void tabCalendars() {
-        // TODO: Display the calendar's events
         int numCalendars = calendarManager.getNumCalendars();
         Object[] choices = new Object[numCalendars];
 
@@ -302,12 +304,54 @@ public class GUI extends JFrame {
 
         String s = String.valueOf(JOptionPane.showInputDialog(null, "Choose the calendar:", null, JOptionPane.PLAIN_MESSAGE, null, choices, null));
 
-        JPanel tab = new JPanel();
+        JPanel tab = new JPanel(new BorderLayout());
 
-        // A calendar is just a connected list of events, display events here
+
+        // Make an Add Events button at the top
+        JButton addEventButton = new JButton("Add New Event(s)");
+        addEventButton.addActionListener(e -> addEvent());
+        tab.add(addEventButton, BorderLayout.NORTH);
+
+        // Make a Scroll Pane for the body, listing all the events
+
+        JPanel eventsList = new JPanel(new GridLayout(0, 1));
+
+        for (Event e : calendarManager.getEvents()){
+            eventsList.add(panelEvent(e));
+        }
+
+//        for (int i = 0; i < 10; i++){
+//            eventsList.add(panelEvent(null));
+//        }
+
+        JScrollPane scrollTab = new JScrollPane(eventsList);
+
+        tab.add(scrollTab, BorderLayout.CENTER);
 
         panelMain.add(tab, BorderLayout.CENTER);
+        panelMain.revalidate();
+        f.setTitle("Calendar " + s);
         f.revalidate();
+    }
+
+//    private static void clearPanelContent() {
+//        Component[] componentList = panelContent.getComponents();
+//
+//        //Loop through the components
+//        for(Component c : componentList){
+//            panelContent.remove(c);
+//        }
+//
+//        panelMain.remove(panelContent);
+//
+//        panelContent = new JPanel();
+//
+//        panelMain.add(panelContent, BorderLayout.CENTER);
+//        panelMain.revalidate();
+//        f.revalidate();
+//    }
+
+    private static void addEvent() {
     }
 
     public static void tabCreateCalendar() {
@@ -334,13 +378,13 @@ public class GUI extends JFrame {
             JPanel eventsList = new JPanel(new GridLayout(0, 1));
 
             for (int i = 0; i < 10; i++) {
-                //eventsList.add(new JButton(String.valueOf(i)));
                 eventsList.add(panelEvent(null));
             }
 
             JScrollPane tab = new JScrollPane(eventsList);
 
             panelMain.add(tab, BorderLayout.CENTER);
+            panelMain.revalidate();
             f.revalidate();
         } catch (NullPointerException e) {
             System.out.println("You probably quit without pressing okay.");
