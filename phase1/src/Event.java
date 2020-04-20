@@ -162,4 +162,8 @@ public class Event {
         this.startDateTime = null;
         this.endDateTime = null;
     }
+    public boolean withinTime(LocalDateTime start, LocalDateTime end){
+        return ( ((this.startDateTime.isBefore(start)) && (this.endDateTime.isAfter(start))) ||
+                ((this.startDateTime.isAfter(start)) && (this.startDateTime.isBefore(end))));
+    }
 }

@@ -189,4 +189,54 @@ public class OverallManager{
         return this.eventManager.getEventsByDate(date);
     }
 
+    // feature for time
+    public ArrayList<Event> getEventsbyHour(LocalDateTime start) {
+        LocalDateTime end = start.plusHours(1);
+        return this.eventManager.eventsByTime(start, end);
     }
+
+    public ArrayList<Event> getEventsbyDay(LocalDateTime start) {
+        LocalDateTime end = start.plusDays(1);
+        return this.eventManager.eventsByTime(start, end);
+    }
+
+    public ArrayList<Event> getEventsbyWeek(LocalDateTime start) {
+        LocalDateTime end = start.plusWeeks(1);
+        return this.eventManager.eventsByTime(start, end);
+    }
+
+    public ArrayList<Event> getEventsbyMonth(LocalDateTime start) {
+        LocalDateTime end = start.plusMonths(1);
+        return this.eventManager.eventsByTime(start, end);
+    }
+
+    public void dayMonthHoliday(int month, int day, int years, String name){
+        LocalDateTime start = LocalDateTime.now();
+        for (int i = 0; i < years; i++) {
+            start = start.plusYears(1);
+            start = start.withMonth(month);
+            start = start.withDayOfMonth(day);
+            this.createEvent(name, start, start.plusDays(1));
+        }
+    }
+
+    public void dayWeekMothHoliday(int month, int week, DayOfWeek day, int year, String name){
+        LocalDateTime start = LocalDateTime.now().withMonth(month).withDayOfMonth(1);
+        for (int i = 0; i < year; i++) {
+            for (int i = 0; i < week - 1; i++) {
+                start = start.plusWeeks(1);
+            }
+            while (!start.getDayOfWeek().equals(DayOfWeek.MONDAY)){
+                start = start.minusDays(1);
+            }
+            while (!start.getDayOfWeek().equals(day)){
+                start = start.plusDays(1);
+            }
+            this.createEvent(name, start, start.plusDays(1));
+            start = start.plusYears(1);
+        }
+
+    }
+
+
+}

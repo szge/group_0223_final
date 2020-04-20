@@ -280,4 +280,15 @@ public class EventManager {
         return LocalDate.of(year, month, day);
     }
 
+    public ArrayList<Event> eventsByTime(LocalDateTime start, LocalDateTime end){
+        ArrayList<Event> events = new ArrayList<>();
+        for (int i = 0; i < this.store.size(); i++) {
+            if (this.store.get(i).withinTime(start, end)){
+                events.add(this.store.get(i));
+            }
+        }
+        return events;
+    }
+
+
 }
