@@ -61,12 +61,12 @@ public class GUI extends JFrame {
         buttonCreateCalendars = new JButton("Create Calendar");
         buttonCreateCalendars.setEnabled(false);
         buttonCreateCalendars.addActionListener(e -> tabCreateCalendar());
-        
+
         buttonDeleteCalendar = new JButton("Delete Recent Calendar");
         buttonDeleteCalendar.setEnabled(false);
         buttonDeleteCalendar.addActionListener(e -> deleteCalendar());
 
-        buttonSearchEvents = new JButton("Search Events");
+        buttonSearchEvents = new JButton("Search Events in Calendar");
         buttonSearchEvents.setEnabled(false);
         buttonSearchEvents.addActionListener(e -> tabSearchEvents());
 
@@ -305,6 +305,45 @@ public class GUI extends JFrame {
     }
 
     private static void editEvent(Event ev) {
+        JDialog dialog = new JDialog(f, "Event Editor", Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setLayout(new GridLayout(0, 1));
+
+        dialog.add(new JLabel("Name:"));
+        JTextField textEditName = new JTextField(String.valueOf(ev.getName()));
+        dialog.add(textEditName);
+        JTextField textEditStartDateTime = new JTextField(String.valueOf(ev.getStartDateTime()));
+        dialog.add(new JLabel("Start Date-Time:"));
+        dialog.add(textEditStartDateTime);
+        dialog.add(new JLabel("End Date-Time:"));
+        JTextField textEditEndDateTime = new JTextField(String.valueOf(ev.getEndDateTime()));
+        dialog.add(textEditEndDateTime);
+        dialog.add(new JLabel("Memo:"));
+        JTextField textEditMemo = new JTextField(String.valueOf(ev.getMemo()));
+        dialog.add(textEditMemo);
+
+        JPanel buttons = new JPanel(new GridLayout(1, 2));
+        JButton buttonCancel = new JButton("Cancel");
+        buttonCancel.addActionListener(e -> dialog.dispose());
+        buttons.add(buttonCancel);
+        JButton buttonConfirm = new JButton("Confirm");
+        buttonConfirm.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    ev.editName(textEditName.getText());
+                    dialog.dispose();
+                    tabCalendars();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        });
+        buttons.add(buttonConfirm);
+        dialog.add(buttons);
+
+        dialog.setSize(300, 300);
+        dialog.setLocationRelativeTo(f);
+        dialog.setVisible(true);
     }
 
     //sends this event to another user
