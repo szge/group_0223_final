@@ -1,7 +1,6 @@
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,13 +26,15 @@ public class GUI extends JFrame {
     static String currUser;
 
     public static CalendarManager calendarManager = new CalendarManager();
+    
+    public static boolean loggedIn = false;
 
     private static final String QUOTE_FILEPATH = "phase2/src/quotes.txt";
     private static final String QUOTE_FILEPATH2 = "src/quotes.txt";
 
     public static void start() {
         // Create the main JFrame.
-        f = new JFrame("panel");
+        f = new JFrame("Calendar Program");
 
         panelMain = new JPanel();
         panelMain.setLayout(new BorderLayout());
@@ -51,23 +52,18 @@ public class GUI extends JFrame {
         buttonRegister.addActionListener(e -> register());
 
         buttonAlerts = new JButton("Alerts");
-        buttonAlerts.setEnabled(false);
         buttonAlerts.addActionListener(e -> tabAlerts());
 
         buttonCalendars = new JButton("Calendars");
-        buttonCalendars.setEnabled(false);
         buttonCalendars.addActionListener(e -> tabCalendars());
 
         buttonCreateCalendars = new JButton("Create Calendar");
-        buttonCreateCalendars.setEnabled(false);
         buttonCreateCalendars.addActionListener(e -> tabCreateCalendar());
 
         buttonDeleteCalendar = new JButton("Delete Recent Calendar");
-        buttonDeleteCalendar.setEnabled(false);
         buttonDeleteCalendar.addActionListener(e -> deleteCalendar());
 
         buttonSearchEvents = new JButton("Search Events in Calendar");
-        buttonSearchEvents.setEnabled(false);
         buttonSearchEvents.addActionListener(e -> tabSearchEvents());
 
         panelSidebar.add(labelUsername);
@@ -78,6 +74,8 @@ public class GUI extends JFrame {
         panelSidebar.add(buttonCreateCalendars);
         panelSidebar.add(buttonDeleteCalendar);
         panelSidebar.add(buttonSearchEvents);
+
+        disableButtons();
 
         panelSidebar.setSize(300, panelMain.getHeight());
         panelSidebar.setBackground(Color.LIGHT_GRAY);
@@ -108,50 +106,72 @@ public class GUI extends JFrame {
         buttonDeleteCalendar.setEnabled(true);
         buttonSearchEvents.setEnabled(true);
     }
+    
+    private static void disableButtons(){
+        buttonAlerts.setEnabled(false);
+        buttonCalendars.setEnabled(false);
+        buttonCreateCalendars.setEnabled(false);
+        buttonDeleteCalendar.setEnabled(false);
+        buttonSearchEvents.setEnabled(false);
+    }
 
     private static void deleteCalendar() {
         calendarManager.deleteCalendar();
     }
 
     public static void login() {
-        // TODO: Refresh current contents
+        if(!loggedIn) {
+            loggedIn = true;
 
-        // Create popup window and contents
-        JPanel panelLogin = new JPanel();
-        panelLogin.setLayout(new GridLayout(4, 1));
-        JTextField textFieldUsername = new JTextField(20);
-        JPasswordField textFieldPassword = new JPasswordField(20);
-        panelLogin.add(new JLabel("Username:"));
-        panelLogin.add(textFieldUsername);
-        panelLogin.add(new JLabel("Password:"));
-        panelLogin.add(textFieldPassword);
+            // Create popup window and contents
+            JPanel panelLogin = new JPanel();
+            panelLogin.setLayout(new GridLayout(4, 1));
+            JTextField textFieldUsername = new JTextField(20);
+            JPasswordField textFieldPassword = new JPasswordField(20);
+            panelLogin.add(new JLabel("Username:"));
+            panelLogin.add(textFieldUsername);
+            panelLogin.add(new JLabel("Password:"));
+            panelLogin.add(textFieldPassword);
 
-        String username, password;
+            String username, password;
 
-        int result = JOptionPane.showConfirmDialog(f, panelLogin,
-                "Please Login", JOptionPane.OK_CANCEL_OPTION);
-        if (result == JOptionPane.OK_OPTION) {
-            username = textFieldUsername.getText();
-            password = new String(textFieldPassword.getPassword());
+            int result = JOptionPane.showConfirmDialog(f, panelLogin,
+                    "Please Login", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                username = textFieldUsername.getText();
+                password = new String(textFieldPassword.getPassword());
 
-            int code = calendarManager.login(username, password);
+                int code = calendarManager.login(username, password);
 
-            if (code == -1) {
-                // This username does not exist in the database
-                JOptionPane.showMessageDialog(f, "The user was not found. Please try again.");
-                login();
-            } else if (code == -2) {
-                // The password is incorrect
-                JOptionPane.showMessageDialog(f, "Sorry, the password is incorrect. Please try again.");
-                login();
-            } else {
-                // Successful login
-                JOptionPane.showMessageDialog(f, "Login successful. Welcome " + username);
-                currUser = username;
-                labelUsername.setText("Welcome " + username);
-                enableButtons();
-                quote();
+                if (code == -1) {
+                    // This username does not exist in the database
+                    JOptionPane.showMessageDialog(f, "The user was not found. Please try again.");
+                    login();
+                } else if (code == -2) {
+                    // The password is incorrect
+                    JOptionPane.showMessageDialog(f, "Sorry, the password is incorrect. Please try again.");
+                    login();
+                } else {
+                    // Successful login
+                    JOptionPane.showMessageDialog(f, "Login successful. Welcome " + username);
+                    currUser = username;
+                    labelUsername.setText("Welcome " + username);
+                    enableButtons();
+                    quote();
+                }
             }
+        } else {
+            loggedIn = false;
+            calendarManager.logout();
+            calendarManager = new CalendarManager();
+            disableButtons();
+            f.setTitle("Calendar Program");
+            labelUsername.setText("Not Logged In!");
+            refreshPanelMain();
+            //clear contents
+            panelMain.add(new JPanel(), BorderLayout.CENTER);
+            panelMain.revalidate();
+            JOptionPane.showMessageDialog(f, "Logout successful.");
         }
     }
 
@@ -331,6 +351,7 @@ public class GUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     ev.editName(textEditName.getText());
+                    
                     dialog.dispose();
                     tabCalendars();
                 } catch (Exception exception) {
@@ -365,10 +386,18 @@ public class GUI extends JFrame {
         JPanel tab = new JPanel(new BorderLayout());
 
 
-        // Make an Add Events button at the top
-        JButton addEventButton = new JButton("Add New Event(s)");
+        // Make an Add Events panel at the top
+        JPanel addEventPanel = new JPanel(new GridLayout(1, 2));
+
+        JButton addEventButton = new JButton("Add New Event");
         addEventButton.addActionListener(e -> addEvent());
-        tab.add(addEventButton, BorderLayout.NORTH);
+        addEventPanel.add(addEventButton);
+
+        JButton addEventSeriesButton = new JButton("Add Event Series");
+        addEventSeriesButton.addActionListener(e -> addEvents());
+        addEventPanel.add(addEventSeriesButton);
+
+        tab.add(addEventPanel, BorderLayout.NORTH);
 
         // Make a Scroll Pane for the body, listing all the events
 
@@ -395,6 +424,113 @@ public class GUI extends JFrame {
     }
 
     private static void addEvent() {
+        JDialog dialog = new JDialog(f, "Event Editor", Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setLayout(new GridLayout(0, 1));
+
+        dialog.add(new JLabel("Name:"));
+        JTextField textEditName = new JTextField("New Event");
+        dialog.add(textEditName);
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        Date currentDate = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
+
+        dialog.add(new JLabel("Start Date:"));
+        // date needs to be an array since it must be final, just access it using date[0]
+        final Date[] startDate = new Date[1];
+        JDateChooser startDateChooser = new JDateChooser(currentDate);
+        dialog.add(startDateChooser);
+
+        dialog.add(new JLabel("Start Time:"));
+
+        JPanel panelStartTime = new JPanel(new GridLayout(1, 5));
+        String[] hours = new String[24];
+        for (int i = 0; i < hours.length; i++){
+            hours[i] = String.valueOf(i);
+        }
+
+        String[] minutes = new String[60];
+        for (int i = 0; i < minutes.length; i++){
+            minutes[i] = String.valueOf(i);
+        }
+        // Empty spacing to left
+        panelStartTime.add(new JLabel());
+        JComboBox startHours = new JComboBox(hours);
+        // Set default time to current
+        startHours.setSelectedIndex(currentDateTime.getHour());
+        panelStartTime.add(startHours);
+        panelStartTime.add(new JLabel(":", SwingConstants.CENTER));
+        JComboBox startMinutes = new JComboBox(minutes);
+        startMinutes.setSelectedIndex(currentDateTime.getMinute());
+        panelStartTime.add(startMinutes);
+        panelStartTime.add(new JLabel());
+        dialog.add(panelStartTime);
+
+        dialog.add(new JLabel("End Date:"));
+        // date needs to be an array since it must be final, just access it using date[0]
+        final Date[] endDate = new Date[1];
+        JDateChooser endDateChooser = new JDateChooser(currentDate);
+        dialog.add(endDateChooser);
+
+        dialog.add(new JLabel("End Time:"));
+
+        JPanel panelEndTime = new JPanel(new GridLayout(1, 5));
+        // Empty spacing to left
+        panelEndTime.add(new JLabel());
+        JComboBox endHours = new JComboBox(hours);
+        endHours.setSelectedIndex(currentDateTime.getHour());
+        panelEndTime.add(endHours);
+        panelEndTime.add(new JLabel(":", SwingConstants.CENTER));
+        JComboBox endMinutes = new JComboBox(minutes);
+        endMinutes.setSelectedIndex(currentDateTime.getMinute());
+        panelEndTime.add(endMinutes);
+        panelEndTime.add(new JLabel());
+        dialog.add(panelEndTime);
+
+        dialog.add(new JLabel("Memo:"));
+        JTextField textEditMemo = new JTextField();
+        dialog.add(textEditMemo);
+
+        JPanel buttons = new JPanel(new GridLayout(1, 2));
+        JButton buttonCancel = new JButton("Cancel");
+        buttonCancel.addActionListener(e -> dialog.dispose());
+        buttons.add(buttonCancel);
+        JButton buttonConfirm = new JButton("Confirm");
+        buttonConfirm.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String name = textEditName.getText();
+                    // Convert from Date to LocalDateTime
+                    LocalDateTime startLocalDateTime = startDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    // Set hours from selection
+                    startLocalDateTime = startLocalDateTime.withHour(startHours.getSelectedIndex());
+                    startLocalDateTime = startLocalDateTime.withMinute(startMinutes.getSelectedIndex());
+                    LocalDateTime endLocalDateTime = endDateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    endLocalDateTime = endLocalDateTime.withHour(endHours.getSelectedIndex());
+                    endLocalDateTime = endLocalDateTime.withMinute(endMinutes.getSelectedIndex());
+
+                    if(startLocalDateTime.compareTo(endLocalDateTime) > 0){
+                        JOptionPane.showMessageDialog(dialog, "The start date and time cannot be later than the end date and time");
+                    }
+                    else{
+                        calendarManager.createEvent(name, startLocalDateTime, endLocalDateTime);
+                        dialog.dispose();
+                        tabCalendars();
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        });
+        buttons.add(buttonConfirm);
+        dialog.add(buttons);
+
+        dialog.setSize(300, 300);
+        dialog.setLocationRelativeTo(f);
+        dialog.setVisible(true);
+    }
+
+    private static void addEvents() {
     }
 
     public static void tabCreateCalendar() {

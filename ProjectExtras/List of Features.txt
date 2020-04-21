@@ -12,3 +12,4 @@ Optional Features:
 - GUI
 - Ability to postpone/reschedule an event
 - Our unique feature: Daily inspirational quotes
+- Our unique feature: Daily inspirational quotes
