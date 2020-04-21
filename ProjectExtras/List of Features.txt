@@ -11,3 +11,4 @@ Team-specific feature: Daily motivational message
 Optional Features:
 - GUI
 - Ability to postpone/reschedule an event
+- Our unique feature: Daily inspirational quotes
