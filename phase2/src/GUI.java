@@ -1,13 +1,20 @@
+import com.toedter.calendar.JDateChooser;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 public class GUI extends JFrame {
-    // TODO: Fix stupid bug, replication: Login Danial:abcd, Calendars -> 1, Search Events -> Tab, ghost buttons????
 
     static JFrame f;
 
@@ -22,6 +29,7 @@ public class GUI extends JFrame {
     public static CalendarManager calendarManager = new CalendarManager();
 
     private static final String QUOTE_FILEPATH = "phase2/src/quotes.txt";
+    private static final String QUOTE_FILEPATH2 = "src/quotes.txt";
 
     public static void start() {
         // Create the main JFrame.
@@ -53,12 +61,12 @@ public class GUI extends JFrame {
         buttonCreateCalendars = new JButton("Create Calendar");
         buttonCreateCalendars.setEnabled(false);
         buttonCreateCalendars.addActionListener(e -> tabCreateCalendar());
-        
+
         buttonDeleteCalendar = new JButton("Delete Recent Calendar");
         buttonDeleteCalendar.setEnabled(false);
         buttonDeleteCalendar.addActionListener(e -> deleteCalendar());
 
-        buttonSearchEvents = new JButton("Search Events");
+        buttonSearchEvents = new JButton("Search Events in Calendar");
         buttonSearchEvents.setEnabled(false);
         buttonSearchEvents.addActionListener(e -> tabSearchEvents());
 
@@ -120,7 +128,7 @@ public class GUI extends JFrame {
 
         String username, password;
 
-        int result = JOptionPane.showConfirmDialog(null, panelLogin,
+        int result = JOptionPane.showConfirmDialog(f, panelLogin,
                 "Please Login", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             username = textFieldUsername.getText();
@@ -130,15 +138,15 @@ public class GUI extends JFrame {
 
             if (code == -1) {
                 // This username does not exist in the database
-                JOptionPane.showMessageDialog(null, "The user was not found. Please try again.");
+                JOptionPane.showMessageDialog(f, "The user was not found. Please try again.");
                 login();
             } else if (code == -2) {
                 // The password is incorrect
-                JOptionPane.showMessageDialog(null, "Sorry, the password is incorrect. Please try again.");
+                JOptionPane.showMessageDialog(f, "Sorry, the password is incorrect. Please try again.");
                 login();
             } else {
                 // Successful login
-                JOptionPane.showMessageDialog(null, "Login successful. Welcome " + username);
+                JOptionPane.showMessageDialog(f, "Login successful. Welcome " + username);
                 currUser = username;
                 labelUsername.setText("Welcome " + username);
                 enableButtons();
@@ -198,6 +206,7 @@ public class GUI extends JFrame {
         for (Alert a : calendarManager.getAlerts()) {
             // TODO: this
         }
+        refreshPanelMain();
         panelMain.add(tab, BorderLayout.CENTER);
         panelMain.revalidate();
         f.revalidate();
@@ -248,7 +257,7 @@ public class GUI extends JFrame {
         // natural height, maximum width
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel eventDesc = new JLabel("Filler text \n HELLO \n Line 3");
+        JLabel eventDesc = new JLabel(ev.toString());
         c.weightx = 0.0;
         c.gridwidth = 3;
         c.ipady = 60;
@@ -280,12 +289,61 @@ public class GUI extends JFrame {
         c.gridx = 2;
         c.gridy = 1;
         c.ipady = 0;
+        button.addActionListener(e -> memosView(ev));
         pane.add(button, c);
+
+        button = new JButton("Create Alerts");
 
         return pane;
     }
 
+    // Popup window where a user can view event memos, or add/subtract memos
+    private static void memosView(Event ev) {
+    }
+
+    private static void createAlertsAlerts(Event ev) {
+    }
+
     private static void editEvent(Event ev) {
+        JDialog dialog = new JDialog(f, "Event Editor", Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setLayout(new GridLayout(0, 1));
+
+        dialog.add(new JLabel("Name:"));
+        JTextField textEditName = new JTextField(String.valueOf(ev.getName()));
+        dialog.add(textEditName);
+        JTextField textEditStartDateTime = new JTextField(String.valueOf(ev.getStartDateTime()));
+        dialog.add(new JLabel("Start Date-Time:"));
+        dialog.add(textEditStartDateTime);
+        dialog.add(new JLabel("End Date-Time:"));
+        JTextField textEditEndDateTime = new JTextField(String.valueOf(ev.getEndDateTime()));
+        dialog.add(textEditEndDateTime);
+        dialog.add(new JLabel("Memo:"));
+        JTextField textEditMemo = new JTextField(String.valueOf(ev.getMemo()));
+        dialog.add(textEditMemo);
+
+        JPanel buttons = new JPanel(new GridLayout(1, 2));
+        JButton buttonCancel = new JButton("Cancel");
+        buttonCancel.addActionListener(e -> dialog.dispose());
+        buttons.add(buttonCancel);
+        JButton buttonConfirm = new JButton("Confirm");
+        buttonConfirm.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    ev.editName(textEditName.getText());
+                    dialog.dispose();
+                    tabCalendars();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        });
+        buttons.add(buttonConfirm);
+        dialog.add(buttons);
+
+        dialog.setSize(300, 300);
+        dialog.setLocationRelativeTo(f);
+        dialog.setVisible(true);
     }
 
     //sends this event to another user
@@ -302,7 +360,7 @@ public class GUI extends JFrame {
             choices[i] = i + 1;
         }
 
-        String s = String.valueOf(JOptionPane.showInputDialog(null, "Choose the calendar:", null, JOptionPane.PLAIN_MESSAGE, null, choices, null));
+        String s = String.valueOf(JOptionPane.showInputDialog(f, "Choose the calendar:", null, JOptionPane.PLAIN_MESSAGE, null, choices, null));
 
         JPanel tab = new JPanel(new BorderLayout());
 
@@ -320,36 +378,21 @@ public class GUI extends JFrame {
             eventsList.add(panelEvent(e));
         }
 
-//        for (int i = 0; i < 10; i++){
-//            eventsList.add(panelEvent(null));
-//        }
-
         JScrollPane scrollTab = new JScrollPane(eventsList);
 
         tab.add(scrollTab, BorderLayout.CENTER);
 
+        refreshPanelMain();
         panelMain.add(tab, BorderLayout.CENTER);
         panelMain.revalidate();
         f.setTitle("Calendar " + s);
         f.revalidate();
     }
 
-//    private static void clearPanelContent() {
-//        Component[] componentList = panelContent.getComponents();
-//
-//        //Loop through the components
-//        for(Component c : componentList){
-//            panelContent.remove(c);
-//        }
-//
-//        panelMain.remove(panelContent);
-//
-//        panelContent = new JPanel();
-//
-//        panelMain.add(panelContent, BorderLayout.CENTER);
-//        panelMain.revalidate();
-//        f.revalidate();
-//    }
+    private static void refreshPanelMain() {
+        panelMain.removeAll();
+        panelMain.add(panelSidebar, BorderLayout.WEST);
+    }
 
     private static void addEvent() {
     }
@@ -359,16 +402,45 @@ public class GUI extends JFrame {
     }
 
     public static void tabSearchEvents() {
-        Object[] choices = {"Tag", "Date", "Memo", "Series"};
+        Object[] choices = {"Start Date", "Memo", "Series"};
 
-        String s = (String) JOptionPane.showInputDialog(null, "Search events by:", null, JOptionPane.PLAIN_MESSAGE, null, choices, null);
+        String s = (String) JOptionPane.showInputDialog(f, "Search events by:", null, JOptionPane.PLAIN_MESSAGE, null, choices, null);
 
         ArrayList<Event> eventArrayList = new ArrayList<Event>();
         try {
-            if (s.equals("Tag")) {
+            if (s.equals("Start Date")) {
+                JDialog dialog = new JDialog(f, "Date Picker Dialog", Dialog.ModalityType.APPLICATION_MODAL);
+                dialog.setLayout(new GridLayout(3, 1));
+                dialog.add(new JLabel("Please pick a date:"));
 
-            } else if (s.equals("Date")) {
+                JDateChooser dateChooser = new JDateChooser();
+                dialog.add(dateChooser);
 
+                JButton inputButton = new JButton("Confirm");
+
+                // date needs to be an array since it must be final, just access it using date[0]
+                final Date[] date = new Date[1];
+
+                inputButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        date[0] = dateChooser.getDate();
+                        if (date[0] != null) {
+                            dialog.dispose();
+                        }
+                    }
+                });
+                dialog.add(inputButton);
+                dialog.setSize(300, 100);
+                dialog.setLocationRelativeTo(f);
+                dialog.setVisible(true);
+                System.out.println("Date selection: " + date[0]);
+
+                // Convert deprecated Date to LocalDate
+                LocalDate dateFormat = date[0].toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                System.out.println(dateFormat);
+
+                eventArrayList = calendarManager.getEventsByDate(dateFormat);
             } else if (s.equals("Memo")) {
 
             } else if (s.equals("Series")) {
@@ -377,12 +449,19 @@ public class GUI extends JFrame {
 
             JPanel eventsList = new JPanel(new GridLayout(0, 1));
 
-            for (int i = 0; i < 10; i++) {
-                eventsList.add(panelEvent(null));
+//            for (int i = 0; i < 10; i++) {
+//                // Temporarily test events
+//                Event e = new Event("Event " + i, LocalDateTime.now(), LocalDateTime.now().plusMinutes(1));
+//                eventsList.add(panelEvent(e));
+//            }
+
+            for (Event ev : eventArrayList) {
+                eventsList.add(panelEvent(ev));
             }
 
             JScrollPane tab = new JScrollPane(eventsList);
 
+            refreshPanelMain();
             panelMain.add(tab, BorderLayout.CENTER);
             panelMain.revalidate();
             f.revalidate();
@@ -395,20 +474,38 @@ public class GUI extends JFrame {
     // Display quote of the day popup
     public static void quote() {
         try {
+            System.out.println("Trying " + QUOTE_FILEPATH);
             File myObj = new File(QUOTE_FILEPATH);
+            System.out.println("Success! Found " + QUOTE_FILEPATH);
             Scanner myReader = new Scanner(myObj);
             ArrayList<String> data = new ArrayList<>();
             while (myReader.hasNextLine()) {
                 data.add(myReader.nextLine());
             }
             myReader.close();
-
-            JOptionPane.showMessageDialog(null, data.get((int) (Math.random() * data.size())), "Quote of the day", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(f, data.get((int) (Math.random() * data.size())), "Quote of the day", JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException e) {
-            System.out.println("File path for quotes.txt not found.");
-            e.printStackTrace();
+            System.out.println("File path not found. for " + QUOTE_FILEPATH);
+            System.out.println("Trying " + QUOTE_FILEPATH2);
+            try {
+                File myObj = new File(QUOTE_FILEPATH2);
+                System.out.println("Success! Found " + QUOTE_FILEPATH2);
+                Scanner myReader = new Scanner(myObj);
+                ArrayList<String> data = new ArrayList<>();
+                while (myReader.hasNextLine()) {
+                    data.add(myReader.nextLine());
+                }
+                myReader.close();
+                JOptionPane.showMessageDialog(f, data.get((int) (Math.random() * data.size())), "Quote of the day", JOptionPane.INFORMATION_MESSAGE);
+            } catch (FileNotFoundException e2) {
+                System.out.println("File path not found. for " + QUOTE_FILEPATH2);
+                e2.printStackTrace();
+            } catch (IndexOutOfBoundsException e2) {
+                System.out.println("Oops, looks like the line in " + QUOTE_FILEPATH2 + " is out of bounds");
+                e2.printStackTrace();
+            }
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("Oops, looks like the line in quotes.txt is out of bounds");
+            System.out.println("Oops, looks like the line in " + QUOTE_FILEPATH + " is out of bounds");
             e.printStackTrace();
         }
     }
