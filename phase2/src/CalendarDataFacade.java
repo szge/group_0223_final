@@ -20,7 +20,7 @@ public class CalendarDataFacade {
     public String usern;
 
     public CalendarDataFacade() {
-        String filename = "src/ProgramData.json";
+        String filename = "phase2/src/ProgramData.json";
         File file = new File(filename);
         JSONParser parser = new JSONParser();
 
@@ -172,7 +172,7 @@ public class CalendarDataFacade {
         Event.bringDownNum();
         user.put("Events",saver.saveEvents(toBeLoaded));
         jfile.put(username, user);
-        try(FileWriter file = new FileWriter("src/ProgramData.json")) {
+        try(FileWriter file = new FileWriter("phase2/src/ProgramData.json")) {
             file.write(jfile.toJSONString());
         }
     }
