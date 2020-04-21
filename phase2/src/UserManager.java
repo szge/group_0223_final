@@ -14,11 +14,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLOutput;
 
 public class UserManager {
 
     private JSONArray userJsonArray;
-    private static final String FILE_PATH = "src/users.json";
+    private static final String FILE_PATH = "phase2/src/users.json";
+    private static final String FILE_PATH2 = "src/users.json";
 
     /**
      * @author Alex
@@ -30,17 +32,33 @@ public class UserManager {
      */
     public UserManager()
     {
+        System.out.println("Trying to locate " + FILE_PATH);
         try(FileReader reader = new FileReader(FILE_PATH))
         {
-
+            System.out.println("Success! Found " + FILE_PATH);
             JSONParser jsonParser = new JSONParser();
             Object jsonText = jsonParser.parse(reader);
             JSONArray jsonArray = (JSONArray) jsonText;
             userJsonArray = (JSONArray) jsonText;
 
         } catch(FileNotFoundException e) {
-            System.out.println("Users.txt not found!");
-            e.printStackTrace();
+            System.out.println("IOException, couldn't find " + FILE_PATH);
+            System.out.println("Trying to locate " + FILE_PATH2);
+
+            try (FileReader reader = new FileReader(FILE_PATH2)) {
+
+                System.out.println("Success! Found " + FILE_PATH2);
+                JSONParser jsonParser = new JSONParser();
+                Object jsonText = jsonParser.parse(reader);
+                JSONArray jsonArray = (JSONArray) jsonText;
+                userJsonArray = (JSONArray) jsonText;
+
+            } catch (FileNotFoundException e2) {
+                System.out.println("IOException, couldn't find " + FILE_PATH2);
+                e2.printStackTrace();
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
