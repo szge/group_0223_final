@@ -97,32 +97,36 @@ public class Event {
     }
 
     /**
-     *
-     * @return
+     * Author: Arsham Moradi
+     * Getter for memo of an event
+     * @return the memo for this event
      */
     public Memo getMemo(){
         return this.memo;
     }
 
     /**
-     *
-     * @param newName
+     * Author: Arsham Moradi
+     * Editing name of an event
+     * @param newName new name of the event
      */
     public void editName(String newName) {
         name = newName;
     }
 
     /**
-     *
-     * @param memo
+     *Author: Arsham Moradi
+     * Edits the memo of an event
+     * @param memo new memo for the event
      */
     public void editMemo(Memo memo) {
         this.memo = memo;
     }
 
     /**
-     *
-     * @param start
+     * Author: Arsham Moradi
+     * Changes the start of an event
+     * @param start new start for the event
      */
     public void editStart(LocalDateTime start) {
         if (start.isBefore(endDateTime)){
@@ -131,8 +135,9 @@ public class Event {
     }
 
     /**
-     *
-     * @param end
+     * Author: Arsham Moradi
+     * Changes the end of an event
+     * @param end new end for an event
      */
     public void editEnd(LocalDateTime end){
         if (end.isAfter(this.startDateTime)){
@@ -141,29 +146,42 @@ public class Event {
     }
 
     /**
-     *
+     * Author: Arsham Moradi
+     * Removes the memo of an event by setting it to null
      */
     public void removeMemo(){
         this.memo = null;
     }
 
     /**
-     *
-     * @param alert
+     * Author: Arsham Moradi
+     * Removes an alert from an event's list of alerts
+     * @param alert alert that is going to be removed
      */
     public void removeAlert(Alert alert){
         this.alerts.remove(alert);
     }
 
     /**
-     *
+     * Author: Arsham Moradi
+     * Postpones an event by setting its start and end to null, while maintaining the duration
      */
     public void postpone(){
         this.startDateTime = null;
         this.endDateTime = null;
     }
+
+    /**
+     * Author: Arsham Moradi
+     * Used to determine whether an event is happening in a time-span
+     * @param start start of the period in question
+     * @param end end of the period in question
+     * @return whether or not the event is happening between the start and the finish line
+     */
+
     public boolean withinTime(LocalDateTime start, LocalDateTime end){
         return ( ((this.startDateTime.isBefore(start)) && (this.endDateTime.isAfter(start))) ||
-                ((this.startDateTime.isAfter(start)) && (this.startDateTime.isBefore(end))));
+                ((this.startDateTime.isAfter(start)) && (this.startDateTime.isBefore(end))) ||
+                (this.startDateTime.isEqual(start)));
     }
 }

@@ -27,7 +27,8 @@ public class Series {
 
     /**
      * Author: Arsham Moradi
-     * @param newEvent
+     * Adds an event to a series
+     * @param newEvent event to be added to the series
      */
 
     public void addEvent(Event newEvent) {
@@ -36,16 +37,33 @@ public class Series {
         }
     }
 
+    /**
+     * Author: Arsham Moradi
+     * Removes an event from a series
+     * @param event event to be removed
+     */
+
     public void removeEvent(Event event){
         if (events.contains(event)) {
             events.remove(event);
         }
     }
 
+    /**
+     * Author: Arsham Moradi
+     * Checks whether an event is a part of a series
+     * @param event event who's existence is going to be checked
+     * @return whether or not event is in the series
+     */
     public boolean contains(Event event){
         return events.contains(event);
     }
 
+    /**
+     * Author: Arsham Moradi
+     * Changes the name of a series
+     * @param name new name of the series
+     */
     public void changeName(String name){
         this.name = name;
     }

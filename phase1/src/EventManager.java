@@ -4,14 +4,13 @@ import java.util.ArrayList;
 
 public class EventManager {
 
-    private ArrayList<Event> store;
+    private ArrayList<Event> store; //Stores all the events
 
     public EventManager(ArrayList<Event> store) {
         this.store = store;
     }
 
 
-    //Phase 2 methods
     /**
      * postpone the event by setting it's start and end as null, while maintaining its duration
      * @param event
@@ -20,20 +19,34 @@ public class EventManager {
         event.postpone();
     }
 
+    /**
+     * Gets all the postponed events
+     * @return
+     */
     public ArrayList<Event> getPostponed(){
         ArrayList<Event> events = new ArrayList<>();
-        for (int i = 0; i < this.store.size(); i++) {
-            if (this.store.get(i).getStartDateTime() == null){
-                events.add(this.store.get(i));
+        for (Event event : this.store) {
+            if (event.getStartDateTime() == null) {
+                events.add(event);
             }
         }
         return events;
     }
 
+    /**
+     * Get the id for an event
+     * @param event
+     * @return
+     */
     public int getId(Event event){
         return event.getId();
     }
 
+    /**
+     * Gets the event that has a certain id
+     * @param id
+     * @return
+     */
     public Event getEvent(int id){
         for (Event event : this.store) {
             if (event.getId() == id) {
@@ -43,9 +56,6 @@ public class EventManager {
         return null;
     }
 
-
-
-    //1)Basics for events
     /**
      * Creates a new event and adds it to the store of events already available
      * @param name
@@ -54,7 +64,6 @@ public class EventManager {
      * @return the new event
      */
     public Event createEvent(String name, LocalDateTime start, LocalDateTime end) {
-        //creates an event
         Event event = new Event(name, start, end);
         this.store.add(event);
         return event;
@@ -95,9 +104,6 @@ public class EventManager {
         event.editName(newName);
     }
 
-
-    //2)Tag methods
-
     /**
      * Adds a tag to an event
      * @param event
@@ -114,58 +120,61 @@ public class EventManager {
      */
     public void removeTag(Event event, String content) {
         event.removeTag(content);
-    } //remove a tag
-
-    /**
-     * edits a tag by changing it to another
-     * @param event
-     * @param oldTag
-     * @param newTag
-     */
-    public void editTag(Event event, String oldTag, String newTag) {
-        //edit a tag by removing the old tag and adding a new tag
-        event.removeTag(oldTag);
-        event.addTag(newTag);
     }
 
+    /**
+     * Returns the tags for an event
+     * @param event
+     * @return
+     */
     public ArrayList<String> getTag(Event event){
         return event.getTags();
     }
 
-    //3)Alert methods
+    /**
+     * Deletes an alert from an event's list of alerts
+     * @param event
+     * @param alert
+     */
     public void deleteAlert(Event event, Alert alert) {
         event.removeAlert(alert);
-    } //deleting an alert from an event
+    }
 
+    /**
+     * Adds an alert to an event's list of alerts
+     * @param event
+     * @param alert
+     */
     public void addAlert(Event event, Alert alert) {
         event.addAlert(alert);
-    } //add an alert
+    }
 
-
-
-    //4)Memo methods
+    /**
+     * Removes an event's memo
+     * @param event
+     */
     public void deleteMemo(Event event) {
         event.removeMemo();
-    } //delete a memo
+    }
 
+    /**
+     * Adds a memo to an event's list of memos
+     * @param event
+     * @param memo
+     */
     public void addMemo(Event event, Memo memo) {
         event.addMemo(memo);
-    } //add/replace a memo
+    }
 
+    /**
+     * Get the memo for an event
+     * @param event
+     * @return
+     */
     public Memo getMemo(Event event){
         return event.getMemo();
-    } //get the memo of an event
-
-    //search methods
-    public ArrayList<Event> getEventsByDate(LocalDate date){
-        ArrayList<Event> eventsToReturn = new ArrayList<Event>();
-        for(Event event: this.store){
-            if(date.equals(timetoDate(event.getStartDateTime()))){
-                eventsToReturn.add(event);
-            }
-        }
-        return eventsToReturn;
     }
+
     /**
      * @author Danial
      *
@@ -280,11 +289,17 @@ public class EventManager {
         return LocalDate.of(year, month, day);
     }
 
+    /**
+     * Get all the events happening within a time span
+     * @param start
+     * @param end
+     * @return
+     */
     public ArrayList<Event> eventsByTime(LocalDateTime start, LocalDateTime end){
         ArrayList<Event> events = new ArrayList<>();
-        for (int i = 0; i < this.store.size(); i++) {
-            if (this.store.get(i).withinTime(start, end)){
-                events.add(this.store.get(i));
+        for (Event event : this.store) {
+            if (event.withinTime(start, end)) {
+                events.add(event);
             }
         }
         return events;

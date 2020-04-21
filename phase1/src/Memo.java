@@ -34,8 +34,8 @@ public class Memo {
 
     /**
      * Author: Arsham Moradi
+     * Adds the id of the event to the memo
      * @param id id of the event being added
-     *
      */
     public void addEvent(Integer id) {
         if (!events.contains(id)) {
@@ -45,8 +45,8 @@ public class Memo {
 
     /**
      * Author: Arsham Moradi
-     * @param id id of the event being removed
      * Removing the event with the given id from the Memo's list of event
+     * @param id id of the event being removed
      */
     public void removeEvent(int id){
         this.events.remove(this.events.indexOf(id));
@@ -54,8 +54,8 @@ public class Memo {
 
     /**
      * Author: Arsham Moradi
-     * @param content the name which the memo's name is being changed to
      * Changes the name of the Memo to the given string
+     * @param content the name which the memo's name is being changed to
      */
     public void changeName(String content){
         this.contents = content;
