@@ -1,10 +1,17 @@
+import com.toedter.calendar.JDateChooser;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 public class GUI extends JFrame {
@@ -120,7 +127,7 @@ public class GUI extends JFrame {
 
         String username, password;
 
-        int result = JOptionPane.showConfirmDialog(null, panelLogin,
+        int result = JOptionPane.showConfirmDialog(f, panelLogin,
                 "Please Login", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             username = textFieldUsername.getText();
@@ -130,15 +137,15 @@ public class GUI extends JFrame {
 
             if (code == -1) {
                 // This username does not exist in the database
-                JOptionPane.showMessageDialog(null, "The user was not found. Please try again.");
+                JOptionPane.showMessageDialog(f, "The user was not found. Please try again.");
                 login();
             } else if (code == -2) {
                 // The password is incorrect
-                JOptionPane.showMessageDialog(null, "Sorry, the password is incorrect. Please try again.");
+                JOptionPane.showMessageDialog(f, "Sorry, the password is incorrect. Please try again.");
                 login();
             } else {
                 // Successful login
-                JOptionPane.showMessageDialog(null, "Login successful. Welcome " + username);
+                JOptionPane.showMessageDialog(f, "Login successful. Welcome " + username);
                 currUser = username;
                 labelUsername.setText("Welcome " + username);
                 enableButtons();
@@ -313,7 +320,7 @@ public class GUI extends JFrame {
             choices[i] = i + 1;
         }
 
-        String s = String.valueOf(JOptionPane.showInputDialog(null, "Choose the calendar:", null, JOptionPane.PLAIN_MESSAGE, null, choices, null));
+        String s = String.valueOf(JOptionPane.showInputDialog(f, "Choose the calendar:", null, JOptionPane.PLAIN_MESSAGE, null, choices, null));
 
         JPanel tab = new JPanel(new BorderLayout());
 
@@ -355,16 +362,45 @@ public class GUI extends JFrame {
     }
 
     public static void tabSearchEvents() {
-        Object[] choices = {"Tag", "Date", "Memo", "Series"};
+        Object[] choices = {"Start Date", "Memo", "Series"};
 
-        String s = (String) JOptionPane.showInputDialog(null, "Search events by:", null, JOptionPane.PLAIN_MESSAGE, null, choices, null);
+        String s = (String) JOptionPane.showInputDialog(f, "Search events by:", null, JOptionPane.PLAIN_MESSAGE, null, choices, null);
 
         ArrayList<Event> eventArrayList = new ArrayList<Event>();
         try {
-            if (s.equals("Tag")) {
+            if (s.equals("Start Date")) {
+                JDialog dialog = new JDialog(f, "Date Picker Dialog", Dialog.ModalityType.APPLICATION_MODAL);
+                dialog.setLayout(new GridLayout(3, 1));
+                dialog.add(new JLabel("Please pick a date:"));
 
-            } else if (s.equals("Date")) {
+                JDateChooser dateChooser = new JDateChooser();
+                dialog.add(dateChooser);
 
+                JButton inputButton = new JButton("Confirm");
+
+                // date needs to be an array since it must be final, just access it using date[0]
+                final Date[] date = new Date[1];
+
+                inputButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        date[0] = dateChooser.getDate();
+                        if (date[0] != null) {
+                            dialog.dispose();
+                        }
+                    }
+                });
+                dialog.add(inputButton);
+                dialog.setSize(300, 100);
+                dialog.setLocationRelativeTo(f);
+                dialog.setVisible(true);
+                System.out.println("Date selection: " + date[0]);
+
+                // Convert deprecated Date to LocalDate
+                LocalDate dateFormat = date[0].toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                System.out.println(dateFormat);
+
+                eventArrayList = calendarManager.getEventsByDate(dateFormat);
             } else if (s.equals("Memo")) {
 
             } else if (s.equals("Series")) {
@@ -373,10 +409,14 @@ public class GUI extends JFrame {
 
             JPanel eventsList = new JPanel(new GridLayout(0, 1));
 
-            for (int i = 0; i < 10; i++) {
-                // Temporarily test events
-                Event e = new Event("Event " + i, LocalDateTime.now(), LocalDateTime.now().plusMinutes(1));
-                eventsList.add(panelEvent(e));
+//            for (int i = 0; i < 10; i++) {
+//                // Temporarily test events
+//                Event e = new Event("Event " + i, LocalDateTime.now(), LocalDateTime.now().plusMinutes(1));
+//                eventsList.add(panelEvent(e));
+//            }
+
+            for (Event ev : eventArrayList) {
+                eventsList.add(panelEvent(ev));
             }
 
             JScrollPane tab = new JScrollPane(eventsList);
@@ -402,7 +442,7 @@ public class GUI extends JFrame {
             }
             myReader.close();
 
-            JOptionPane.showMessageDialog(null, data.get((int) (Math.random() * data.size())), "Quote of the day", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(f, data.get((int) (Math.random() * data.size())), "Quote of the day", JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException e) {
             System.out.println("File path for quotes.txt not found.");
             e.printStackTrace();
