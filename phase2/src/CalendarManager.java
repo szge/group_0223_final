@@ -212,6 +212,10 @@ public class CalendarManager {
         return dataMg.getEventsByDate(searchDate);
     }
 
+    public ArrayList<Event> getEventsByDate(LocalDate searchDate) {
+        return dataMg.getEventsByDate(searchDate);
+    }
+
 
     /**
      * @return ArrayList of all Alerts
