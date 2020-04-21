@@ -65,7 +65,7 @@ public class Event {
     }
 
     public String toString() {
-        return String.format("Event #%d Name: %s Start time: %s End time: %s", id, name, startDateTime.toString(), endDateTime.toString());
+        return String.format("Name: %s\nStart time: %s\nEnd time: %s\nID: %d\nMemo: %s", name, startDateTime.toString(), endDateTime.toString(), id, String.valueOf(memo));
     }
 
     public String getName() {
@@ -77,9 +77,17 @@ public class Event {
         return startDateTime;
     }
 
+    public void setStartDateTime(LocalDateTime startDateTime){
+        this.startDateTime = startDateTime;
+    }
+
     // return the end date and time of this Event
     public LocalDateTime getEndDateTime() {
         return endDateTime;
+    }
+
+    public void setEndDateTime(LocalDateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     // return the duration of this Event

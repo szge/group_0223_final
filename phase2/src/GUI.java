@@ -277,7 +277,7 @@ public class GUI extends JFrame {
         // natural height, maximum width
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel eventDesc = new JLabel(ev.toString());
+        JTextArea eventDesc = new JTextArea(ev.toString());
         c.weightx = 0.0;
         c.gridwidth = 3;
         c.ipady = 60;
@@ -303,22 +303,7 @@ public class GUI extends JFrame {
         button.addActionListener(e -> editEvent(ev));
         pane.add(button, c);
 
-        button = new JButton("Memos");
-        c.weightx = 0.5;
-        c.gridwidth = 1;
-        c.gridx = 2;
-        c.gridy = 1;
-        c.ipady = 0;
-        button.addActionListener(e -> memosView(ev));
-        pane.add(button, c);
-
-        button = new JButton("Create Alerts");
-
         return pane;
-    }
-
-    // Popup window where a user can view event memos, or add/subtract memos
-    private static void memosView(Event ev) {
     }
 
     private static void createAlertsAlerts(Event ev) {
@@ -337,26 +322,29 @@ public class GUI extends JFrame {
         dialog.add(new JLabel("End Date-Time:"));
         JTextField textEditEndDateTime = new JTextField(String.valueOf(ev.getEndDateTime()));
         dialog.add(textEditEndDateTime);
-        dialog.add(new JLabel("Memo:"));
-        JTextField textEditMemo = new JTextField(String.valueOf(ev.getMemo()));
-        dialog.add(textEditMemo);
 
         JPanel buttons = new JPanel(new GridLayout(1, 2));
         JButton buttonCancel = new JButton("Cancel");
         buttonCancel.addActionListener(e -> dialog.dispose());
         buttons.add(buttonCancel);
         JButton buttonConfirm = new JButton("Confirm");
-        buttonConfirm.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
+        buttonConfirm.addActionListener(e -> {
+            try {
+                LocalDateTime start = LocalDateTime.parse(textEditStartDateTime.getText());
+                LocalDateTime end = LocalDateTime.parse(textEditEndDateTime.getText());
+
+                if(start.compareTo(end) > 0){
+                    JOptionPane.showMessageDialog(dialog, "The start date and time cannot be later than the end date and time");
+                } else {
                     ev.editName(textEditName.getText());
-                    
+                    ev.setStartDateTime(start);
+                    ev.setEndDateTime(end);
+
                     dialog.dispose();
                     tabCalendars();
-                } catch (Exception exception) {
-                    exception.printStackTrace();
                 }
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
         });
         buttons.add(buttonConfirm);
@@ -486,10 +474,6 @@ public class GUI extends JFrame {
         panelEndTime.add(new JLabel());
         dialog.add(panelEndTime);
 
-        dialog.add(new JLabel("Memo:"));
-        JTextField textEditMemo = new JTextField();
-        dialog.add(textEditMemo);
-
         JPanel buttons = new JPanel(new GridLayout(1, 2));
         JButton buttonCancel = new JButton("Cancel");
         buttonCancel.addActionListener(e -> dialog.dispose());
@@ -538,7 +522,7 @@ public class GUI extends JFrame {
     }
 
     public static void tabSearchEvents() {
-        Object[] choices = {"Start Date", "Memo", "Series"};
+        Object[] choices = {"Start Date", "Series"};
 
         String s = (String) JOptionPane.showInputDialog(f, "Search events by:", null, JOptionPane.PLAIN_MESSAGE, null, choices, null);
 
@@ -577,19 +561,11 @@ public class GUI extends JFrame {
                 System.out.println(dateFormat);
 
                 eventArrayList = calendarManager.getEventsByDate(dateFormat);
-            } else if (s.equals("Memo")) {
-
             } else if (s.equals("Series")) {
 
             }
 
             JPanel eventsList = new JPanel(new GridLayout(0, 1));
-
-//            for (int i = 0; i < 10; i++) {
-//                // Temporarily test events
-//                Event e = new Event("Event " + i, LocalDateTime.now(), LocalDateTime.now().plusMinutes(1));
-//                eventsList.add(panelEvent(e));
-//            }
 
             for (Event ev : eventArrayList) {
                 eventsList.add(panelEvent(ev));
