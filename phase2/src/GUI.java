@@ -29,6 +29,7 @@ public class GUI extends JFrame {
     public static CalendarManager calendarManager = new CalendarManager();
 
     private static final String QUOTE_FILEPATH = "phase2/src/quotes.txt";
+    private static final String QUOTE_FILEPATH2 = "src/quotes.txt";
 
     public static void start() {
         // Create the main JFrame.
@@ -434,20 +435,38 @@ public class GUI extends JFrame {
     // Display quote of the day popup
     public static void quote() {
         try {
+            System.out.println("Trying " + QUOTE_FILEPATH);
             File myObj = new File(QUOTE_FILEPATH);
+            System.out.println("Success! Found " + QUOTE_FILEPATH);
             Scanner myReader = new Scanner(myObj);
             ArrayList<String> data = new ArrayList<>();
             while (myReader.hasNextLine()) {
                 data.add(myReader.nextLine());
             }
             myReader.close();
-
             JOptionPane.showMessageDialog(f, data.get((int) (Math.random() * data.size())), "Quote of the day", JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException e) {
-            System.out.println("File path for quotes.txt not found.");
-            e.printStackTrace();
+            System.out.println("File path not found. for " + QUOTE_FILEPATH);
+            System.out.println("Trying " + QUOTE_FILEPATH2);
+            try {
+                File myObj = new File(QUOTE_FILEPATH2);
+                System.out.println("Success! Found " + QUOTE_FILEPATH2);
+                Scanner myReader = new Scanner(myObj);
+                ArrayList<String> data = new ArrayList<>();
+                while (myReader.hasNextLine()) {
+                    data.add(myReader.nextLine());
+                }
+                myReader.close();
+                JOptionPane.showMessageDialog(f, data.get((int) (Math.random() * data.size())), "Quote of the day", JOptionPane.INFORMATION_MESSAGE);
+            } catch (FileNotFoundException e2) {
+                System.out.println("File path not found. for " + QUOTE_FILEPATH2);
+                e2.printStackTrace();
+            } catch (IndexOutOfBoundsException e2) {
+                System.out.println("Oops, looks like the line in " + QUOTE_FILEPATH2 + " is out of bounds");
+                e2.printStackTrace();
+            }
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("Oops, looks like the line in quotes.txt is out of bounds");
+            System.out.println("Oops, looks like the line in " + QUOTE_FILEPATH + " is out of bounds");
             e.printStackTrace();
         }
     }
